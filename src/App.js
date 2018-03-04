@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import Path from "./modules/Canvas/Path";
-import Rectangle from "./modules/Canvas/Rectangle";
 import Canvas from "./modules/Canvas/Canvas";
 import Controls from "./Controls";
 import colors, { type Color } from "./colors";
 import tools, { type Tool } from "./tools";
+import Drawing from "./Drawing";
 import { l } from "./utils";
 import { Squared } from "./patterns";
 import createReactApp, {
@@ -15,23 +14,18 @@ import createReactApp, {
 } from "./modules/ReactApp/ReactApp";
 import stylexs from "cxs/component";
 import { range } from "ramda";
+import {
+  type Point,
+  type Drawing as DrawingType,
+  type Thickness
+} from "./types";
 
 type Config = {};
 type Env = { viewport: { width: number, height: number } };
-
-type Point = {| x: number, y: number |};
-type Thickness = number; // TODO better type
-
-type Drawing = {|
-  points: Point[],
-  color: Color,
-  tool: Tool,
-  thickness: Thickness
-|};
 type State = {
   // TODO how to make it strict? And also have the partial type to use for updaters
   points: Point[],
-  drawings: Drawing[],
+  drawings: DrawingType[],
   selectedColor: Color,
   selectedTool: Tool,
   selectedThickness: Thickness
@@ -127,43 +121,22 @@ const renderApp: Render<State> = (
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}
     >
-      {drawings.map(
-        ({ points, color, tool, thickness }, i) =>
-          tool === "pen" ? (
-            <Path key={i} points={points} color={color} thickness={thickness} />
-          ) : tool === "rectangle" ? (
-            <Rectangle
-              thickness={thickness}
-              color={color}
-              key={i}
-              x0={(points[0] || {}).x}
-              y0={(points[0] || {}).y}
-              x1={(points[1] || {}).x}
-              y1={(points[1] || {}).y}
-            />
-          ) : (
-            l.error("TOOL NON SUPPORTATO")
-          )
-      )}
-
-      {selectedTool === "pen" ? (
-        <Path
+      {drawings.map(({ points, color, tool, thickness }, i) => (
+        <Drawing
+          key={i}
           points={points}
-          color={selectedColor}
-          thickness={selectedThickness}
+          color={color}
+          tool={tool}
+          thickness={thickness}
         />
-      ) : selectedTool === "rectangle" ? (
-        <Rectangle
-          thickness={selectedThickness}
-          x0={(points[0] || {}).x}
-          y0={(points[0] || {}).y}
-          x1={(points[1] || {}).x}
-          y1={(points[1] || {}).y}
-          color={selectedColor}
-        />
-      ) : (
-        l.error("TOOL NON SUPPORTATO")
-      )}
+      ))}
+
+      <Drawing
+        points={points}
+        color={selectedColor}
+        tool={selectedTool}
+        thickness={selectedThickness}
+      />
     </Canvas>
   </div>
 );
