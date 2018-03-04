@@ -2,16 +2,14 @@ import React, { Component } from "react";
 import { l, noop } from "../../utils";
 
 const collectPointTouch = ({ touches }) => {
-  if (Array.isArray(touches)) {
-    const [touch, ...otherTouches] = touches;
-    if (
-      touch !== void 0 &&
-      touch !== null &&
-      Number.isFinite(touch.clientX) &&
-      Number.isFinite(touch.clientY)
-    ) {
-      return { x: touch.clientX, y: touch.clientY, otherTouches };
-    }
+  const [touch, ...otherTouches] = [...touches];
+  if (
+    touch !== void 0 &&
+    touch !== null &&
+    Number.isFinite(touch.clientX) &&
+    Number.isFinite(touch.clientY)
+  ) {
+    return { x: touch.clientX, y: touch.clientY, otherTouches };
   }
   throw new Error("Something is wrong in collectPointTouch");
 };
@@ -35,27 +33,27 @@ export default class Canvas extends Component {
 
   readyToStartDraw = () => {
     this.canvas.addEventListener("mousedown", this.onDrawStart);
-    // this.canvas.addEventListener("touchstart", this.onDrawStart);
+    this.canvas.addEventListener("touchstart", this.onDrawStart);
   };
 
   notReadyToStartDraw = () => {
     this.canvas.removeEventListener("mousedown", this.onDrawStart);
-    // this.canvas.removeEventListener("touchstart", this.onDrawStart);
+    this.canvas.removeEventListener("touchstart", this.onDrawStart);
   };
 
   readyToFinishDraw = () => {
-    // this.canvas.addEventListener("touchend", this.onDrawEnd);
+    this.canvas.addEventListener("touchend", this.onDrawEnd);
     this.canvas.addEventListener("mouseup", this.onDrawEnd);
   };
 
   notReadyToFinishDraw = () => {
-    // this.canvas.removeEventListener("touchend", this.onDrawEnd);
+    this.canvas.removeEventListener("touchend", this.onDrawEnd);
     this.canvas.removeEventListener("mouseup", this.onDrawEnd);
   };
 
   notReadyToDraw = () => {
     this.canvas.removeEventListener("mousemove", this.passPointCursor);
-    // this.canvas.removeEventListener("touchmove", this.passPointTouch);
+    this.canvas.removeEventListener("touchmove", this.passPointTouch);
   };
 
   passPoint = method => e => {
@@ -79,11 +77,8 @@ export default class Canvas extends Component {
     this.notReadyToStartDraw();
     this.readyToFinishDraw();
     if (!!e.touches) {
-      // passPointTouch(e);
-      // this.canvas.addEventListener(
-      //   "touchmove",
-      //   passPointTouch
-      // );
+      this.passPointTouch(e);
+      this.canvas.addEventListener("touchmove", this.passPointTouch);
     } else {
       this.passPointCursor(e);
       this.canvas.addEventListener("mousemove", this.passPointCursor);
