@@ -11,9 +11,8 @@ const REDDISH: _Color = [200, 50, 50];
 const GREENISH: _Color = [50, 200, 50];
 const BLUEISH: _Color = [50, 50, 200];
 const BLACKISH: _Color = [50, 50, 50];
-const WHITISH: _Color = [200, 200, 200];
 
-const colors: Colors[] = [BLACKISH, REDDISH, GREENISH, BLUEISH, WHITISH].map(
+const colors: Colors[] = [BLACKISH, REDDISH, GREENISH, BLUEISH].map(
   arrayColorToString
 );
 
