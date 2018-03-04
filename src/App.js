@@ -1,85 +1,116 @@
 import React, { Component } from "react";
-import Path from "./Path";
-import Rectangle from "./Rectangle";
-import Canvas from "./Canvas";
+import Path from "./modules/Canvas/Path";
+import Rectangle from "./modules/Canvas/Rectangle";
+import Canvas from "./modules/Canvas/Canvas";
 import Controls from "./Controls";
-import colors from "./colors";
-import tools from "./tools";
+import colors, { type Color } from "./colors";
+import tools, { type Tool } from "./tools";
 import { l } from "./utils";
-const initialState = {
+import { Squared } from "./patterns";
+import createReactApp, {
+  type Updater,
+  type MakeInitialState,
+  type Render,
+  type Updaters
+} from "./modules/ReactApp/ReactApp";
+import stylexs from "cxs/component";
+import { range } from "ramda";
+
+type Config = {};
+type Env = { viewport: { width: number, height: number } };
+
+type Point = {| x: number, y: number |};
+type Thickness = number; // TODO better type
+
+type Drawing = {|
+  points: Point[],
+  color: Color,
+  tool: Tool,
+  thickness: Thickness
+|};
+type State = {
+  // TODO how to make it strict? And also have the partial type to use for updaters
+  points: Point[],
+  drawings: Drawing[],
+  selectedColor: Color,
+  selectedTool: Tool,
+  selectedThickness: Thickness
+};
+
+const windowWidth: number = window.innerWidth;
+const windowHeight: number = window.innerHeight;
+
+const config: Config = {};
+const env: Env = {
+  viewport: {
+    width: windowWidth,
+    height: windowHeight
+  }
+};
+
+const initialState = (config, env) => ({
   points: [],
   drawings: [],
   selectedColor: colors[0],
   selectedTool: tools[0],
   selectedThickness: 5
-};
+});
 
-class App extends Component {
-  state = initialState;
-
-  updaters = {
-    collectPoint: ({ x, y }) => {
-      this.setState(({ selectedTool, points }) => ({
-        points:
-          selectedTool === "pen"
-            ? points.concat({ x, y })
-            : points.length === 0 ? [{ x, y }] : [points[0], { x, y }]
-      }));
-    },
-
-    setColor: color => () => {
-      this.setState({
-        selectedColor: color
-      });
-    },
-
-    setTool: tool => () => {
-      this.setState({
-        selectedTool: tool
-      });
-    },
-
-    onDrawEnd: () => {
-      this.setState(
-        ({
-          drawings,
-          points,
-          selectedColor,
-          selectedTool,
-          selectedThickness
-        }) => ({
-          points: [],
-          drawings: drawings.concat({
-            points,
-            color: selectedColor,
-            tool: selectedTool,
-            thickness: selectedThickness
-          })
-        })
-      );
-    }
-  };
-
-  render() {
-    return renderApp({
-      ...this.props,
-      ...this.state,
-      ...this.updaters
-    });
-  }
-}
-
-const renderApp = ({
+const collectPoint = (point: Point) => ({
+  selectedTool,
   points,
+  ...restState
+}: State): State => ({
+  ...restState,
+  selectedTool,
+  points:
+    selectedTool === "pen"
+      ? points.concat(point)
+      : points.length === 0 ? [point] : [points[0], point]
+});
+
+const setColor = (color: Color) => (state: State): State => ({
+  ...state,
+  selectedColor: color
+});
+
+const setTool = (tool: Tool) => (state: State): State => ({
+  ...state,
+  selectedTool: tool
+});
+
+const onDrawEnd = () => ({
   drawings,
+  points,
   selectedColor,
   selectedTool,
+  selectedThickness,
+  ...state
+}: State): State => ({
+  ...state,
+  selectedColor,
+  selectedTool,
+  selectedThickness,
+  points: [],
+  drawings: drawings.concat({
+    points,
+    color: selectedColor,
+    tool: selectedTool,
+    thickness: selectedThickness
+  })
+});
+
+const updaters = {
+  collectPoint,
   setColor,
   setTool,
-  collectPoint,
-  selectedThickness,
   onDrawEnd
-}) => (
+};
+
+const renderApp: Render<State> = (
+  { points, drawings, selectedColor, selectedTool, selectedThickness },
+  { setColor, setTool, collectPoint, onDrawEnd }
+) => (
   <div className="app">
     <Controls
       colors={colors}
@@ -92,9 +123,9 @@ const renderApp = ({
     <Canvas
       width={window.innerWidth}
       height={window.innerHeight}
-      background="rgha(0, 0, 0, .8)"
       onDraw={collectPoint}
       onDrawEnd={onDrawEnd}
+      PatternBackground={() => <Squared size={30} />}
     >
       {drawings.map(
         ({ points, color, tool, thickness }, i) =>
@@ -137,4 +168,10 @@ const renderApp = ({
   </div>
 );
 
-export default App;
+export default createReactApp({
+  config,
+  env,
+  makeInitialState: initialState,
+  updaters,
+  render: renderApp
+});

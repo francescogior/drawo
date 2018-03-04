@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { l, noop } from "./utils";
+import { l, noop } from "../../utils";
 
 const collectPointTouch = ({ touches }) => {
   if (Array.isArray(touches)) {
@@ -97,7 +97,13 @@ export default class Canvas extends Component {
   };
 
   render() {
-    const { width, height, background, children } = this.props;
+    const {
+      width,
+      height,
+      background,
+      children,
+      PatternBackground
+    } = this.props;
     return (
       <svg
         ref={canvas => (this.canvas = canvas)}
@@ -105,34 +111,17 @@ export default class Canvas extends Component {
         height={height}
         style={{ background }}
       >
-        <defs>
-          <pattern
-            id="squared"
-            patternUnits="userSpaceOnUse"
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-          >
-            <line
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="20"
-              strokeWidth={2}
-              stroke="skyblue"
-            />
-            <line
-              x1="0"
-              y1="0"
-              x2="20"
-              y2="0"
-              strokeWidth={2}
-              stroke="skyblue"
-            />
-          </pattern>
-        </defs>
-        <rect x={0} y={0} width={width} height={height} fill="url(#squared)" />
+        <defs>{<PatternBackground />}</defs>
+        {PatternBackground && (
+          <rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            fill={`url(#PatternBackground)`}
+          />
+        )}
+
         {children}
       </svg>
     );

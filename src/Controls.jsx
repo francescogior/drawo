@@ -31,7 +31,7 @@ const Colors = ({ colors, selectedColor, setColor }) => (
         key={color}
         background={color}
         selected={selectedColor === color}
-        onClick={setColor(color)}
+        onClick={() => setColor(color)}
       />
     ))}
   </React.Fragment>
@@ -45,7 +45,7 @@ const Tools = ({ tools, selectedTool, setTool }) => (
         background={"rgba(0,0,0,.8)"}
         color="white"
         selected={selectedTool === tool}
-        onClick={setTool(tool)}
+        onClick={() => setTool(tool)}
       >
         {tool[0].toUpperCase()}
       </Square>
