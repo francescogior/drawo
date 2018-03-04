@@ -1,25 +1,16 @@
 import React from "react";
 
-const Path = ({ points, color, thickness, clipPath }) =>
-  points.length === 0 ? null : points.length === 1 ? (
-    <ellipse
-      cx={points[0].x}
-      cy={points[0].y}
-      rx={thickness / 2}
-      ry={thickness / 2}
-      fill={color}
-    />
-  ) : (
-    <path
-      clipPath={clipPath}
-      fill="transparent"
-      stroke={color || "black"}
-      strokeWidth={thickness}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d={pointsToD(points)}
-    />
-  );
+const Path = ({ points, color, thickness, clipPath }) => (
+  <path
+    clipPath={clipPath}
+    fill="transparent"
+    stroke={color || "black"}
+    strokeWidth={thickness}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d={pointsToD(points)}
+  />
+);
 
 const pToString = ({ x, y }) => `${x} ${y}`;
 const psToString = ([{ x: x1, y: y1 }, { x: x2, y: y2 }]) =>
