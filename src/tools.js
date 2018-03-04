@@ -1,5 +1,5 @@
-export type Tool = "pen" | "rectangle" | "circle";
+export type Tool = "pen" | "rectangle" | "circle" | "line";
 
-const tools: Tool[] = ["pen", "rectangle", "circle"];
+const tools: Tool[] = ["pen", "rectangle", "circle", "line"];
 
 export default tools;

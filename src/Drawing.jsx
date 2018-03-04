@@ -3,6 +3,7 @@ import Rectangle from "./modules/Canvas/Rectangle";
 import Path from "./modules/Canvas/Path";
 import Circle from "./modules/Canvas/Circle";
 import Point from "./modules/Canvas/Point";
+import Line from "./modules/Canvas/Line";
 import { head, last } from "ramda";
 import { type Tool } from "./tools";
 import { type Color } from "./colors";
@@ -24,6 +25,7 @@ export default function Drawing({
   const { x: x1, y: y1 } = P1;
 
   if (!x0 && !y0) return null;
+
   if (!x1 && !y1) {
     return <Point x0={x0} y0={y0} thickness={thickness} color={color} />;
   }
@@ -48,6 +50,8 @@ export default function Drawing({
       x1={x1}
       y1={y1}
     />
+  ) : tool === "line" ? (
+    <Line thickness={thickness} color={color} x0={x0} y0={y0} x1={x1} y1={y1} />
   ) : (
     l.error("TOOL NON SUPPORTATO")
   );
