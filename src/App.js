@@ -45,7 +45,8 @@ const initialState = (config, env) => ({
   drawings: [],
   selectedColor: colors[0],
   selectedTool: tools[0],
-  selectedThickness: 5
+  selectedThickness: 5,
+  viewport: env.viewport
 });
 
 const collectPoint = (point: Point) => ({
@@ -106,11 +107,19 @@ const updaters = {
 };
 
 const renderApp: Render<State> = (
-  { points, drawings, selectedColor, selectedTool, selectedThickness },
+  {
+    points,
+    drawings,
+    selectedColor,
+    selectedTool,
+    selectedThickness,
+    viewport
+  },
   { setColor, setTool, collectPoint, onDrawEnd, setThickness }
 ) => (
   <div className="app">
     <Controls
+      direction={viewport.width >= viewport.height ? "row" : "column"}
       colors={colors}
       selectedColor={selectedColor}
       setColor={setColor}
@@ -123,8 +132,8 @@ const renderApp: Render<State> = (
     />
     <Canvas
       className={cxs({ cursor: "crosshair" })}
-      width={window.innerWidth}
-      height={window.innerHeight}
+      width={viewport.width}
+      height={viewport.height}
       onDraw={collectPoint}
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}
