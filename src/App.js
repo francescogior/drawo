@@ -45,7 +45,7 @@ const initialState = (config, env) => ({
   drawings: [],
   selectedColor: colors[0],
   selectedTool: tools[0],
-  selectedThickness: 5,
+  selectedThickness: thicknesses[0],
   viewport: env.viewport
 });
 
