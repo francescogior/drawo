@@ -3,6 +3,7 @@ import Canvas from "./modules/Canvas/Canvas";
 import Controls from "./Controls";
 import colors, { type Color } from "./colors";
 import tools, { type Tool } from "./tools";
+import thicknesses, { type Thickness } from "./thicknesses";
 import Drawing from "./Drawing";
 import { l } from "./utils";
 import { Squared } from "./patterns";
@@ -15,11 +16,7 @@ import createReactApp, {
 import cxs from "cxs";
 import stylexs from "cxs/component";
 import { range } from "ramda";
-import {
-  type Point,
-  type Drawing as DrawingType,
-  type Thickness
-} from "./types";
+import { type Point, type Drawing as DrawingType } from "./types";
 
 type Config = {};
 type Env = { viewport: { width: number, height: number } };
@@ -69,6 +66,11 @@ const setColor = (color: Color) => (state: State): State => ({
   selectedColor: color
 });
 
+const setThickness = (thickness: Thickness) => (state: State): State => ({
+  ...state,
+  selectedThickness: thickness
+});
+
 const setTool = (tool: Tool) => (state: State): State => ({
   ...state,
   selectedTool: tool
@@ -99,12 +101,13 @@ const updaters = {
   collectPoint,
   setColor,
   setTool,
+  setThickness,
   onDrawEnd
 };
 
 const renderApp: Render<State> = (
   { points, drawings, selectedColor, selectedTool, selectedThickness },
-  { setColor, setTool, collectPoint, onDrawEnd }
+  { setColor, setTool, collectPoint, onDrawEnd, setThickness }
 ) => (
   <div className="app">
     <Controls
@@ -114,6 +117,9 @@ const renderApp: Render<State> = (
       tools={tools}
       selectedTool={selectedTool}
       setTool={setTool}
+      thicknesses={thicknesses}
+      selectedThickness={selectedThickness}
+      setThickness={setThickness}
     />
     <Canvas
       className={cxs({ cursor: "crosshair" })}

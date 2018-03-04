@@ -2,6 +2,9 @@ import React from "react";
 import cxs from "cxs";
 import stylexs from "cxs/component";
 import { toolIcons } from "./tools";
+import Point from "./modules/Canvas/Point";
+import Icon, { ICON_COLOR, ICON_SIZE } from "./Icon";
+
 const makeView = stylexs("div");
 
 const Square = makeView(({ size, children, selected, background, color }) => ({
@@ -53,18 +56,50 @@ const Tools = ({ tools, selectedTool, setTool }) => (
   </React.Fragment>
 );
 
+const Thicknesses = ({ thicknesses, selectedThickness, setThickness }) => (
+  <React.Fragment>
+    {thicknesses.map(thickness => (
+      <Square
+        key={thickness}
+        background={"rgba(0,0,0,.8)"}
+        color="white"
+        selected={selectedThickness === thickness}
+        onClick={() => setThickness(thickness)}
+      >
+        <Icon size={ICON_SIZE}>
+          <Point
+            x0={ICON_SIZE / 2}
+            y0={ICON_SIZE / 2}
+            color={ICON_COLOR}
+            thickness={thickness}
+          />
+        </Icon>
+      </Square>
+    ))}
+  </React.Fragment>
+);
+
 const Controls = ({
   colors,
   selectedColor,
   setColor,
   tools,
   selectedTool,
-  setTool
+  setTool,
+  thicknesses,
+  selectedThickness,
+  setThickness
 }) => (
   <div className={cxs({ position: "absolute", zIndex: 1 })}>
     <Colors colors={colors} selectedColor={selectedColor} setColor={setColor} />
     <Space vertical={30} />
     <Tools tools={tools} selectedTool={selectedTool} setTool={setTool} />
+    <Space vertical={30} />
+    <Thicknesses
+      thicknesses={thicknesses}
+      selectedThickness={selectedThickness}
+      setThickness={setThickness}
+    />
   </div>
 );
 

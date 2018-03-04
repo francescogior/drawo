@@ -1,23 +1,13 @@
 import React from "react";
-import Canvas from "./modules/Canvas/Canvas";
 import Rectangle from "./modules/Canvas/Rectangle";
 import Path from "./modules/Canvas/Path";
 import Circle from "./modules/Canvas/Circle";
 import Point from "./modules/Canvas/Point";
 import Line from "./modules/Canvas/Line";
-
+import Icon, { ICON_COLOR, ICON_SIZE } from "./Icon";
 export type Tool = "pen" | "rectangle" | "circle" | "line";
 
 const tools: Tool[] = ["pen", "rectangle", "circle", "line"];
-
-const ICON_COLOR = "rgba(255, 555, 255, .8)";
-const ICON_SIZE = 30;
-
-const Icon = ({ children, size }) => (
-  <Canvas width={size} height={size}>
-    {children}
-  </Canvas>
-);
 
 const iconPenPathPoints = size =>
   [
