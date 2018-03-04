@@ -30,10 +30,10 @@ const IconPen = ({ color, size }) => (
 const IconRectangle = ({ color, size }) => (
   <Icon size={size}>
     <Rectangle
-      x0={size / 4}
-      y0={size / 4}
-      x1={3 * size / 4}
-      y1={3 * size / 4}
+      x0={size / 5}
+      y0={3 * size / 10}
+      x1={4 * size / 5}
+      y1={7 * size / 10}
       color={color}
       thickness={size / 10}
     />
