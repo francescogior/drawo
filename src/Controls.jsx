@@ -1,7 +1,7 @@
 import React from "react";
 import cxs from "cxs";
 import stylexs from "cxs/component";
-
+import { toolIcons } from "./tools";
 const makeView = stylexs("div");
 
 const Square = makeView(({ size, children, selected, background, color }) => ({
@@ -47,7 +47,7 @@ const Tools = ({ tools, selectedTool, setTool }) => (
         selected={selectedTool === tool}
         onClick={() => setTool(tool)}
       >
-        {tool[0].toUpperCase()}
+        {toolIcons[tool] || tool[0].toUpperCase()}
       </Square>
     ))}
   </React.Fragment>

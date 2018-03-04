@@ -10,7 +10,3 @@ body,
   overflow: hidden;
   position: fixed;
 }
-
-svg {
-  cursor: crosshair;
-}

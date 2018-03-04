@@ -12,6 +12,7 @@ import createReactApp, {
   type Render,
   type Updaters
 } from "./modules/ReactApp/ReactApp";
+import cxs from "cxs";
 import stylexs from "cxs/component";
 import { range } from "ramda";
 import {
@@ -115,6 +116,7 @@ const renderApp: Render<State> = (
       setTool={setTool}
     />
     <Canvas
+      className={cxs({ cursor: "crosshair" })}
       width={window.innerWidth}
       height={window.innerHeight}
       onDraw={collectPoint}

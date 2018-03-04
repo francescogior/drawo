@@ -102,16 +102,18 @@ export default class Canvas extends Component {
       height,
       background,
       children,
-      PatternBackground
+      PatternBackground,
+      className
     } = this.props;
     return (
       <svg
+        className={className}
         ref={canvas => (this.canvas = canvas)}
         width={width}
         height={height}
         style={{ background }}
       >
-        <defs>{<PatternBackground />}</defs>
+        {PatternBackground && <defs>{<PatternBackground />}</defs>}
         {PatternBackground && (
           <rect
             x={0}
