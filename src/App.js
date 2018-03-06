@@ -15,7 +15,7 @@ import createReactApp, {
 } from "./modules/ReactApp/ReactApp";
 import cxs from "cxs";
 import stylexs from "cxs/component";
-import { range } from "ramda";
+import { range, findLastIndex, propEq, slice } from "ramda";
 import { type Point, type DrawingType } from "./types";
 
 type Config = {};
@@ -40,6 +40,9 @@ const env: Env = {
     height: windowHeight
   }
 };
+
+const filterBeforeLastClear = drawings =>
+  slice(findLastIndex(propEq("tool", "clear"), drawings), Infinity, drawings);
 
 const initialState = (config: Config, env: Env): State => ({
   points: [],
@@ -88,12 +91,20 @@ const onDrawEnd = () => ({
   })
 });
 
+const onClear = () => ({ drawings }) => ({
+  drawings: drawings.concat({
+    points: [],
+    tool: "clear"
+  })
+});
+
 const updaters = {
   collectPoint,
   setColor,
   setTool,
   setThickness,
-  onDrawEnd
+  onDrawEnd,
+  onClear
 };
 
 const renderApp: Render<State> = (
@@ -105,7 +116,7 @@ const renderApp: Render<State> = (
     selectedThickness,
     viewport
   },
-  { setColor, setTool, collectPoint, onDrawEnd, setThickness }
+  { setColor, setTool, collectPoint, onDrawEnd, setThickness, onClear }
 ) => (
   <div className="app">
     <Controls
@@ -119,6 +130,7 @@ const renderApp: Render<State> = (
       thicknesses={thicknesses}
       selectedThickness={selectedThickness}
       setThickness={setThickness}
+      onClear={onClear}
     />
     <Canvas
       className={cxs({ cursor: "crosshair" })}
@@ -128,15 +140,17 @@ const renderApp: Render<State> = (
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}
     >
-      {drawings.map(({ points, color, tool, thickness }, i) => (
-        <Drawing
-          key={i}
-          points={points}
-          color={color}
-          tool={tool}
-          thickness={thickness}
-        />
-      ))}
+      {filterBeforeLastClear(drawings).map(
+        ({ points, color, tool, thickness }, i) => (
+          <Drawing
+            key={i}
+            points={points}
+            color={color}
+            tool={tool}
+            thickness={thickness}
+          />
+        )
+      )}
 
       <Drawing
         points={points}

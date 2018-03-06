@@ -1,7 +1,7 @@
 import React from "react";
 import cxs from "cxs";
 import stylexs from "cxs/component";
-import { toolIcons } from "./tools";
+import { toolIcons, thicknessIcon, clearIcon } from "./icons";
 import Point from "./modules/Canvas/Point";
 import Icon, { ICON_COLOR, ICON_SIZE } from "./Icon";
 
@@ -76,17 +76,21 @@ const Thicknesses = ({
         selected={selectedThickness === thickness}
         onClick={() => setThickness(thickness)}
       >
-        <Icon size={ICON_SIZE}>
-          <Point
-            x0={ICON_SIZE / 2}
-            y0={ICON_SIZE / 2}
-            color={ICON_COLOR}
-            thickness={thickness}
-          />
-        </Icon>
+        {thicknessIcon(thickness)}
       </Square>
     ))}
   </React.Fragment>
+);
+
+const Clear = ({ direction, onClear }) => (
+  <Square
+    direction={direction}
+    background={"rgba(0,0,0,.8)"}
+    color="white"
+    onClick={onClear}
+  >
+    {clearIcon}
+  </Square>
 );
 
 const Controls = ({
@@ -100,7 +104,8 @@ const Controls = ({
   setTool,
   thicknesses,
   selectedThickness,
-  setThickness
+  setThickness,
+  onClear
 }) => (
   <div className={className}>
     <Colors
@@ -129,6 +134,11 @@ const Controls = ({
       selectedThickness={selectedThickness}
       setThickness={setThickness}
     />
+    <Space
+      vertical={direction === "column" ? 30 : 0}
+      horizontal={direction === "row" ? 30 : 0}
+    />
+    <Clear direction={direction} onClear={onClear} />
   </div>
 );
 
