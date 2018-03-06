@@ -16,12 +16,13 @@ import createReactApp, {
 import cxs from "cxs";
 import stylexs from "cxs/component";
 import { range } from "ramda";
-import { type Point, type Drawing as DrawingType } from "./types";
+import { type Point, type DrawingType } from "./types";
 
 type Config = {};
 type Env = { viewport: { width: number, height: number } };
 type State = {
   // TODO how to make it strict? And also have the partial type to use for updaters
+  // here https://flow.org/en/docs/types/utilities/#toc-rest
   points: Point[],
   drawings: DrawingType[],
   selectedColor: Color,
