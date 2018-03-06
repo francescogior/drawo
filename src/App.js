@@ -42,7 +42,11 @@ const env: Env = {
 };
 
 const filterBeforeLastClear = drawings =>
-  slice(findLastIndex(propEq("tool", "clear"), drawings), Infinity, drawings);
+  slice(
+    findLastIndex(propEq("tool", "clear"), drawings) + 1,
+    Infinity,
+    drawings
+  );
 
 const initialState = (config: Config, env: Env): State => ({
   points: [],
