@@ -21,14 +21,14 @@ import { type Point, type DrawingType } from "./types";
 type Config = {};
 type Env = { viewport: { width: number, height: number } };
 type State = {
-  // TODO how to make it strict? And also have the partial type to use for updaters
-  // here https://flow.org/en/docs/types/utilities/#toc-rest
   points: Point[],
   drawings: DrawingType[],
   selectedColor: Color,
   selectedTool: Tool,
   selectedThickness: Thickness
 };
+
+type PState = $Rest<State, {}>;
 
 const windowWidth: number = window.innerWidth;
 const windowHeight: number = window.innerHeight;
@@ -41,7 +41,7 @@ const env: Env = {
   }
 };
 
-const initialState = (config, env) => ({
+const initialState = (config: Config, env: Env): State => ({
   points: [],
   drawings: [],
   selectedColor: colors[0],
@@ -52,29 +52,23 @@ const initialState = (config, env) => ({
 
 const collectPoint = (point: Point) => ({
   selectedTool,
-  points,
-  ...restState
-}: State): State => ({
-  ...restState,
-  selectedTool,
+  points
+}: PState): PState => ({
   points:
     selectedTool === "pen"
       ? points.concat(point)
       : points.length === 0 ? [point] : [points[0], point]
 });
 
-const setColor = (color: Color) => (state: State): State => ({
-  ...state,
+const setColor = (color: Color) => (): PState => ({
   selectedColor: color
 });
 
-const setThickness = (thickness: Thickness) => (state: State): State => ({
-  ...state,
+const setThickness = (thickness: Thickness) => (): PState => ({
   selectedThickness: thickness
 });
 
-const setTool = (tool: Tool) => (state: State): State => ({
-  ...state,
+const setTool = (tool: Tool) => (): PState => ({
   selectedTool: tool
 });
 
@@ -83,13 +77,8 @@ const onDrawEnd = () => ({
   points,
   selectedColor,
   selectedTool,
-  selectedThickness,
-  ...state
-}: State): State => ({
-  ...state,
-  selectedColor,
-  selectedTool,
-  selectedThickness,
+  selectedThickness
+}: PState): PState => ({
   points: [],
   drawings: drawings.concat({
     points,
