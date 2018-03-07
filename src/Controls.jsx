@@ -93,6 +93,31 @@ const Clear = ({ direction, onClear }) => (
   </Square>
 );
 
+const UndoAndRedo = ({ direction, onUndo, onRedo, redoable, undoable }) => (
+  <React.Fragment>
+    {undoable && (
+      <Square
+        direction={direction}
+        background={"rgba(0,0,0,.8)"}
+        color="white"
+        onClick={onUndo}
+      >
+        {"<=="}
+      </Square>
+    )}
+    {redoable && (
+      <Square
+        direction={direction}
+        background={"rgba(0,0,0,.8)"}
+        color="white"
+        onClick={onRedo}
+      >
+        {"==>"}
+      </Square>
+    )}
+  </React.Fragment>
+);
+
 const Controls = ({
   direction,
   className,
@@ -105,7 +130,11 @@ const Controls = ({
   thicknesses,
   selectedThickness,
   setThickness,
-  onClear
+  onClear,
+  onUndo,
+  onRedo,
+  redoable,
+  undoable
 }) => (
   <div className={className}>
     <Colors
@@ -139,6 +168,17 @@ const Controls = ({
       horizontal={direction === "row" ? 30 : 0}
     />
     <Clear direction={direction} onClear={onClear} />
+    <Space
+      vertical={direction === "column" ? 30 : 0}
+      horizontal={direction === "row" ? 30 : 0}
+    />
+    <UndoAndRedo
+      direction={direction}
+      onUndo={onUndo}
+      onRedo={onRedo}
+      redoable={redoable}
+      undoable={undoable}
+    />
   </div>
 );
 

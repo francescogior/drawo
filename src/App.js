@@ -15,12 +15,27 @@ import createReactApp, {
 } from "./modules/ReactApp/ReactApp";
 import cxs from "cxs";
 import stylexs from "cxs/component";
-import { range, findLastIndex, propEq, slice } from "ramda";
+import {
+  range,
+  findLastIndex,
+  propEq,
+  slice,
+  last,
+  concat,
+  append,
+  prepend,
+  head
+} from "ramda";
 import { type Point, type DrawingType } from "./types";
+
+// TODO something nicer
+let id = 0;
+const makeId = () => id++;
 
 type Config = {};
 type Env = { viewport: { width: number, height: number } };
 type State = {
+  undos: DrawingType[],
   points: Point[],
   drawings: DrawingType[],
   selectedColor: Color,
@@ -50,6 +65,7 @@ const filterBeforeLastClear = drawings =>
 
 const initialState = (config: Config, env: Env): State => ({
   points: [],
+  undos: [],
   drawings: [],
   selectedColor: colors[0],
   selectedTool: tools[0],
@@ -63,7 +79,7 @@ const collectPoint = (point: Point) => ({
 }: PState): PState => ({
   points:
     selectedTool === "pen"
-      ? points.concat(point)
+      ? append(point, points)
       : points.length === 0 ? [point] : [points[0], point]
 });
 
@@ -87,19 +103,33 @@ const onDrawEnd = () => ({
   selectedThickness
 }: PState): PState => ({
   points: [],
-  drawings: drawings.concat({
+  undos: [],
+  drawings: append({
+    id: makeId(),
     points,
     color: selectedColor,
     tool: selectedTool,
     thickness: selectedThickness
-  })
+  })(drawings)
 });
 
 const onClear = () => ({ drawings }) => ({
-  drawings: drawings.concat({
+  undos: [],
+  drawings: append({
+    id: makeId(),
     points: [],
     tool: "clear"
-  })
+  })(drawings)
+});
+
+const onUndo = () => ({ undos, drawings }) => ({
+  drawings: slice(0, -1)(drawings),
+  undos: prepend(last(drawings))(undos)
+});
+
+const onRedo = () => ({ undos, drawings }) => ({
+  drawings: append(head(undos))(drawings),
+  undos: slice(-1, Infinity)(undos)
 });
 
 const updaters = {
@@ -108,7 +138,9 @@ const updaters = {
   setTool,
   setThickness,
   onDrawEnd,
-  onClear
+  onClear,
+  onUndo,
+  onRedo
 };
 
 const renderApp: Render<State> = (
@@ -117,10 +149,20 @@ const renderApp: Render<State> = (
     drawings,
     selectedColor,
     selectedTool,
+    undos,
     selectedThickness,
     viewport
   },
-  { setColor, setTool, collectPoint, onDrawEnd, setThickness, onClear }
+  {
+    setColor,
+    setTool,
+    collectPoint,
+    onDrawEnd,
+    setThickness,
+    onClear,
+    onUndo,
+    onRedo
+  }
 ) => (
   <div className="app">
     <Controls
@@ -135,6 +177,10 @@ const renderApp: Render<State> = (
       selectedThickness={selectedThickness}
       setThickness={setThickness}
       onClear={onClear}
+      onUndo={onUndo}
+      onRedo={onRedo}
+      redoable={undos.length > 0}
+      undoable={drawings.length > 0}
     />
     <Canvas
       className={cxs({ cursor: "crosshair" })}
@@ -145,9 +191,9 @@ const renderApp: Render<State> = (
       PatternBackground={() => <Squared size={30} />}
     >
       {filterBeforeLastClear(drawings).map(
-        ({ points, color, tool, thickness }, i) => (
+        ({ points, color, tool, thickness, id }) => (
           <Drawing
-            key={i}
+            key={id}
             points={points}
             color={color}
             tool={tool}
@@ -157,6 +203,7 @@ const renderApp: Render<State> = (
       )}
 
       <Drawing
+        key="currentDrawing"
         points={points}
         color={selectedColor}
         tool={selectedTool}
