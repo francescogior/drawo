@@ -24,7 +24,12 @@ const Square = makeView(
     alignItems: "center",
     justifyContent: "center",
     background,
-    boxShadow: `${selected ? "6px" : "3px"} 3px 5px rgba(0,0,0,.3)`,
+    ":active": {
+      transform: "scale(1.1, 1.1)"
+    },
+    boxShadow: `${selected && direction === "column" ? "6px" : "3px"} ${
+      selected && direction === "row" ? "6px" : "3px"
+    } 5px rgba(0,0,0,.3)`,
     color
   })
 );
