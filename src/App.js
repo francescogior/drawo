@@ -43,6 +43,7 @@ type State = {
   selectedThickness: Thickness,
   isColorMenuOpen: boolean,
   isToolMenuOpen: boolean,
+  isThicknessMenuOpen: boolean,
 }
 
 type PState = $Rest<State, {}>
@@ -75,6 +76,7 @@ const initialState = (config: Config, env: Env): State => ({
   viewport: env.viewport,
   isColorMenuOpen: false,
   isToolMenuOpen: false,
+  isThicknessMenuOpen: false,
 })
 
 const collectPoint = (point: Point) => ({
@@ -105,6 +107,14 @@ const openToolMenu = () => (): PState => ({
 
 const closeToolMenu = () => (): PState => ({
   isToolMenuOpen: false,
+})
+
+const openThicknessMenu = () => (): PState => ({
+  isThicknessMenuOpen: true,
+})
+
+const closeThicknessMenu = () => (): PState => ({
+  isThicknessMenuOpen: false,
 })
 
 const setThickness = (thickness: Thickness) => (): PState => ({
@@ -165,6 +175,8 @@ const updaters = {
   closeColorMenu,
   openToolMenu,
   closeToolMenu,
+  openThicknessMenu,
+  closeThicknessMenu,
 }
 
 const renderApp: Render<State> = (
@@ -178,6 +190,7 @@ const renderApp: Render<State> = (
     viewport,
     isColorMenuOpen,
     isToolMenuOpen,
+    isThicknessMenuOpen,
   },
   {
     setColor,
@@ -192,6 +205,8 @@ const renderApp: Render<State> = (
     closeColorMenu,
     openToolMenu,
     closeToolMenu,
+    openThicknessMenu,
+    closeThicknessMenu,
   },
 ) => (
   <div className="app">
@@ -212,6 +227,9 @@ const renderApp: Render<State> = (
       thicknesses={thicknesses}
       selectedThickness={selectedThickness}
       setThickness={setThickness}
+      isThicknessMenuOpen={isThicknessMenuOpen}
+      openThicknessMenu={openThicknessMenu}
+      closeThicknessMenu={closeThicknessMenu}
       onClear={onClear}
       onUndo={onUndo}
       onRedo={onRedo}

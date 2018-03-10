@@ -65,10 +65,10 @@ const Select = ({
 const Square = makeView(
   ({ direction, size, children, selected, background, color, visible }) => ({
     visibility: visible === false ? 'hidden' : 'visible',
-    height: `${50 + (selected && direction === 'row' ? 20 : 0)}px`,
-    width: `${50 + (selected && direction === 'column' ? 20 : 0)}px`,
+    height: `50px`,
+    width: `50px`,
     cursor: 'pointer',
-    transition: 'width .2s, height .2s, box-shadow .5s',
+    transition: 'transform .2s',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -76,9 +76,7 @@ const Square = makeView(
     ':active': {
       transform: 'scale(.9, .9)',
     },
-    boxShadow: `${selected && direction === 'column' ? '6px' : '3px'} ${
-      selected && direction === 'row' ? '6px' : '3px'
-    } 5px rgba(0,0,0,.3)`,
+    boxShadow: `0 0 10px rgba(0,0,0,.3)`,
     color,
   }),
 )
@@ -93,28 +91,6 @@ const Space = makeView(({ vertical, horizontal }) => ({
   marginTop: `${vertical}px`,
   marginBottom: `${vertical}px`,
 }))
-
-const Thicknesses = ({
-  direction,
-  thicknesses,
-  selectedThickness,
-  setThickness,
-}) => (
-  <_>
-    {thicknesses.map((thickness) => (
-      <Square
-        direction={direction}
-        key={thickness}
-        background={'rgba(255,255,255,.8)'}
-        color={'rgba(0,0,0,.8)'}
-        selected={selectedThickness === thickness}
-        onClick={() => setThickness(thickness)}
-      >
-        {thicknessIcon(thickness)}
-      </Square>
-    ))}
-  </_>
-)
 
 const Clear = ({ direction, onClear }) => (
   <Square
@@ -175,6 +151,9 @@ const Controls = ({
   thicknesses,
   selectedThickness,
   setThickness,
+  isThicknessMenuOpen,
+  openThicknessMenu,
+  closeThicknessMenu,
   onClear,
   onUndo,
   onRedo,
@@ -198,21 +177,28 @@ const Controls = ({
       isMenuOpen={isToolMenuOpen}
       selectedValue={selectedTool}
       background="rgba(255, 255, 255, .8)"
-      color="rgba(0, 0, 0, .8)"
+      color={selectedColor}
       elements={tools.map((tool) => ({
         value: tool,
-        label: toolIcons[tool],
+        label: toolIcons({ color: selectedColor })[tool],
       }))}
       onSelect={setTool}
       onMenuClose={closeToolMenu}
       onMenuOpen={openToolMenu}
     />
     <TheSpace direction={direction} />
-    <Thicknesses
-      direction={direction}
-      thicknesses={thicknesses}
-      selectedThickness={selectedThickness}
-      setThickness={setThickness}
+    <Select
+      isMenuOpen={isThicknessMenuOpen}
+      selectedValue={selectedThickness}
+      background="rgba(255, 255, 255, .8)"
+      color={selectedColor}
+      elements={thicknesses.map((thickness) => ({
+        value: thickness,
+        label: thicknessIcon(thickness, { color: selectedColor }),
+      }))}
+      onSelect={setThickness}
+      onMenuClose={closeThicknessMenu}
+      onMenuOpen={openThicknessMenu}
     />
     <TheSpace direction={direction} />
     <Clear direction={direction} onClear={onClear} />
