@@ -94,23 +94,6 @@ const Space = makeView(({ vertical, horizontal }) => ({
   marginBottom: `${vertical}px`,
 }))
 
-const Tools = ({ direction, tools, selectedTool, setTool }) => (
-  <_>
-    {tools.map((tool) => (
-      <Square
-        direction={direction}
-        key={tool}
-        background={'rgba(0,0,0,.8)'}
-        color="white"
-        selected={selectedTool === tool}
-        onClick={() => setTool(tool)}
-      >
-        {toolIcons[tool] || tool[0].toUpperCase()}
-      </Square>
-    ))}
-  </_>
-)
-
 const Thicknesses = ({
   direction,
   thicknesses,
@@ -122,8 +105,8 @@ const Thicknesses = ({
       <Square
         direction={direction}
         key={thickness}
-        background={'rgba(0,0,0,.8)'}
-        color="white"
+        background={'rgba(255,255,255,.8)'}
+        color={'rgba(0,0,0,.8)'}
         selected={selectedThickness === thickness}
         onClick={() => setThickness(thickness)}
       >
@@ -136,8 +119,8 @@ const Thicknesses = ({
 const Clear = ({ direction, onClear }) => (
   <Square
     direction={direction}
-    background={'rgba(0,0,0,.8)'}
-    color="white"
+    background={'rgba(255,255,255,.8)'}
+    color={'rgba(0,0,0,.8)'}
     onClick={onClear}
   >
     {clearIcon}
@@ -149,8 +132,8 @@ const UndoAndRedo = ({ direction, onUndo, onRedo, redoable, undoable }) => (
     <Square
       visible={undoable}
       direction={direction}
-      background={'rgba(0,0,0,.8)'}
-      color="white"
+      background={'rgba(255,255,255,.8)'}
+      color={'rgba(0,0,0,.8)'}
       onClick={onUndo}
     >
       {undoIcon}
@@ -158,8 +141,8 @@ const UndoAndRedo = ({ direction, onUndo, onRedo, redoable, undoable }) => (
     <Square
       visible={redoable}
       direction={direction}
-      background={'rgba(0,0,0,.8)'}
-      color="white"
+      background={'rgba(255,255,255,.8)'}
+      color={'rgba(0,0,0,.8)'}
       onClick={onRedo}
     >
       {redoIcon}
@@ -214,8 +197,8 @@ const Controls = ({
     <Select
       isMenuOpen={isToolMenuOpen}
       selectedValue={selectedTool}
-      color="rgba(255, 255, 255, .8)"
-      background="rgba(0, 0, 0, .8)"
+      background="rgba(255, 255, 255, .8)"
+      color="rgba(0, 0, 0, .8)"
       elements={tools.map((tool) => ({
         value: tool,
         label: toolIcons[tool],
