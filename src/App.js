@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import Canvas from "./modules/Canvas/Canvas";
-import Controls from "./Controls";
-import colors, { type Color } from "./colors";
-import tools, { type Tool } from "./tools";
-import thicknesses, { type Thickness } from "./thicknesses";
-import Drawing from "./Drawing";
-import { l } from "./utils";
-import { Squared } from "./patterns";
+import React, { Component } from 'react'
+import Canvas from './modules/Canvas/Canvas'
+import Controls from './Controls'
+import colors, { type Color } from './colors'
+import tools, { type Tool } from './tools'
+import thicknesses, { type Thickness } from './thicknesses'
+import Drawing from './Drawing'
+import { l } from './utils'
+import { Squared } from './patterns'
 import createReactApp, {
   type Updater,
   type MakeInitialState,
   type Render,
-  type Updaters
-} from "./modules/ReactApp/ReactApp";
-import cxs from "cxs";
-import stylexs from "cxs/component";
+  type Updaters,
+} from './modules/ReactApp/ReactApp'
+import cxs from 'cxs'
+import stylexs from 'cxs/component'
 import {
   range,
   findLastIndex,
@@ -24,44 +24,46 @@ import {
   concat,
   append,
   prepend,
-  head
-} from "ramda";
-import { type Point, type DrawingType } from "./types";
+  head,
+} from 'ramda'
+import { type Point, type DrawingType } from './types'
 
 // TODO something nicer
-let id = 0;
-const makeId = () => id++;
+let id = 0
+const makeId = () => id++
 
-type Config = {};
-type Env = { viewport: { width: number, height: number } };
+type Config = {}
+type Env = { viewport: { width: number, height: number } }
 type State = {
   undos: DrawingType[],
   points: Point[],
   drawings: DrawingType[],
   selectedColor: Color,
   selectedTool: Tool,
-  selectedThickness: Thickness
-};
+  selectedThickness: Thickness,
+  isColorMenuOpen: boolean,
+  isToolMenuOpen: boolean,
+}
 
-type PState = $Rest<State, {}>;
+type PState = $Rest<State, {}>
 
-const windowWidth: number = window.innerWidth;
-const windowHeight: number = window.innerHeight;
+const windowWidth: number = window.innerWidth
+const windowHeight: number = window.innerHeight
 
-const config: Config = {};
+const config: Config = {}
 const env: Env = {
   viewport: {
     width: windowWidth,
-    height: windowHeight
-  }
-};
+    height: windowHeight,
+  },
+}
 
-const filterBeforeLastClear = drawings =>
+const filterBeforeLastClear = (drawings) =>
   slice(
-    findLastIndex(propEq("tool", "clear"), drawings) + 1,
+    findLastIndex(propEq('tool', 'clear'), drawings) + 1,
     Infinity,
-    drawings
-  );
+    drawings,
+  )
 
 const initialState = (config: Config, env: Env): State => ({
   points: [],
@@ -70,37 +72,55 @@ const initialState = (config: Config, env: Env): State => ({
   selectedColor: colors[0],
   selectedTool: tools[0],
   selectedThickness: thicknesses[0],
-  viewport: env.viewport
-});
+  viewport: env.viewport,
+  isColorMenuOpen: false,
+  isToolMenuOpen: false,
+})
 
 const collectPoint = (point: Point) => ({
   selectedTool,
-  points
+  points,
 }: PState): PState => ({
   points:
-    selectedTool === "pen"
+    selectedTool === 'pen'
       ? append(point, points)
-      : points.length === 0 ? [point] : [points[0], point]
-});
+      : points.length === 0 ? [point] : [points[0], point],
+})
 
 const setColor = (color: Color) => (): PState => ({
-  selectedColor: color
-});
+  selectedColor: color,
+})
+
+const openColorMenu = () => (): PState => ({
+  isColorMenuOpen: true,
+})
+
+const closeColorMenu = () => (): PState => ({
+  isColorMenuOpen: false,
+})
+
+const openToolMenu = () => (): PState => ({
+  isToolMenuOpen: true,
+})
+
+const closeToolMenu = () => (): PState => ({
+  isToolMenuOpen: false,
+})
 
 const setThickness = (thickness: Thickness) => (): PState => ({
-  selectedThickness: thickness
-});
+  selectedThickness: thickness,
+})
 
 const setTool = (tool: Tool) => (): PState => ({
-  selectedTool: tool
-});
+  selectedTool: tool,
+})
 
 const onDrawEnd = () => ({
   drawings,
   points,
   selectedColor,
   selectedTool,
-  selectedThickness
+  selectedThickness,
 }: PState): PState => ({
   points: [],
   undos: [],
@@ -109,28 +129,28 @@ const onDrawEnd = () => ({
     points,
     color: selectedColor,
     tool: selectedTool,
-    thickness: selectedThickness
-  })(drawings)
-});
+    thickness: selectedThickness,
+  })(drawings),
+})
 
 const onClear = () => ({ drawings }) => ({
   undos: [],
   drawings: append({
     id: makeId(),
     points: [],
-    tool: "clear"
-  })(drawings)
-});
+    tool: 'clear',
+  })(drawings),
+})
 
 const onUndo = () => ({ undos, drawings }) => ({
   drawings: slice(0, -1)(drawings),
-  undos: prepend(last(drawings))(undos)
-});
+  undos: prepend(last(drawings))(undos),
+})
 
 const onRedo = () => ({ undos, drawings }) => ({
   drawings: append(head(undos))(drawings),
-  undos: slice(1, Infinity)(undos)
-});
+  undos: slice(1, Infinity)(undos),
+})
 
 const updaters = {
   collectPoint,
@@ -140,8 +160,12 @@ const updaters = {
   onDrawEnd,
   onClear,
   onUndo,
-  onRedo
-};
+  onRedo,
+  openColorMenu,
+  closeColorMenu,
+  openToolMenu,
+  closeToolMenu,
+}
 
 const renderApp: Render<State> = (
   {
@@ -151,7 +175,9 @@ const renderApp: Render<State> = (
     selectedTool,
     undos,
     selectedThickness,
-    viewport
+    viewport,
+    isColorMenuOpen,
+    isToolMenuOpen,
   },
   {
     setColor,
@@ -161,18 +187,28 @@ const renderApp: Render<State> = (
     setThickness,
     onClear,
     onUndo,
-    onRedo
-  }
+    onRedo,
+    openColorMenu,
+    closeColorMenu,
+    openToolMenu,
+    closeToolMenu,
+  },
 ) => (
   <div className="app">
     <Controls
-      direction={viewport.width >= viewport.height ? "row" : "column"}
+      direction={viewport.width >= viewport.height ? 'row' : 'column'}
       colors={colors}
       selectedColor={selectedColor}
+      isColorMenuOpen={isColorMenuOpen}
+      openColorMenu={openColorMenu}
+      closeColorMenu={closeColorMenu}
       setColor={setColor}
       tools={tools}
       selectedTool={selectedTool}
       setTool={setTool}
+      isToolMenuOpen={isToolMenuOpen}
+      openToolMenu={openToolMenu}
+      closeToolMenu={closeToolMenu}
       thicknesses={thicknesses}
       selectedThickness={selectedThickness}
       setThickness={setThickness}
@@ -183,7 +219,7 @@ const renderApp: Render<State> = (
       undoable={drawings.length > 0}
     />
     <Canvas
-      className={cxs({ cursor: "crosshair" })}
+      className={cxs({ cursor: 'crosshair' })}
       width={viewport.width}
       height={viewport.height}
       onDraw={collectPoint}
@@ -199,7 +235,7 @@ const renderApp: Render<State> = (
             tool={tool}
             thickness={thickness}
           />
-        )
+        ),
       )}
 
       <Drawing
@@ -211,12 +247,12 @@ const renderApp: Render<State> = (
       />
     </Canvas>
   </div>
-);
+)
 
 export default createReactApp({
   config,
   env,
   makeInitialState: initialState,
   updaters,
-  render: renderApp
-});
+  render: renderApp,
+})

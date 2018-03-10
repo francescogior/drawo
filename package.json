@@ -5,14 +5,14 @@
   "dependencies": {
     "cxs": "^6.2.0",
     "prettier": "^1.10.2",
+    "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.1.1"
   },
   "scripts": {
-    "deploy":
-      "npm run build && rm ./build/static/js/*.map && now ./build --public --debug && sleep 60 && now alias",
+    "deploy": "npm run build && rm ./build/static/js/*.map && now ./build --public --debug && sleep 60 && now alias",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
