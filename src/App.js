@@ -235,6 +235,7 @@ const renderApp: Render<State> = (
       onRedo={onRedo}
       redoable={undos.length > 0}
       undoable={drawings.length > 0}
+      clearable={filterBeforeLastClear(drawings).length > 0}
     />
     <Canvas
       className={cxs({ cursor: 'crosshair' })}

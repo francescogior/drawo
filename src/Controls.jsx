@@ -92,8 +92,9 @@ const Space = makeView(({ vertical, horizontal }) => ({
   marginBottom: `${vertical}px`,
 }))
 
-const Clear = ({ direction, onClear }) => (
+const Clear = ({ clearable, direction, onClear }) => (
   <Square
+    visible={clearable}
     direction={direction}
     background={'rgba(255,255,255,.8)'}
     color={'rgba(0,0,0,.8)'}
@@ -159,6 +160,7 @@ const Controls = ({
   onRedo,
   redoable,
   undoable,
+  clearable,
 }) => (
   <div className={className}>
     <Select
@@ -201,7 +203,7 @@ const Controls = ({
       onMenuOpen={openThicknessMenu}
     />
     <TheSpace direction={direction} />
-    <Clear direction={direction} onClear={onClear} />
+    <Clear clearable={clearable} direction={direction} onClear={onClear} />
     <TheSpace direction={direction} />
     <UndoAndRedo
       direction={direction}
