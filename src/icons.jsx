@@ -14,6 +14,28 @@ const iconPenPathPoints = size =>
     [5 * size / 6, 1 * size / 6]
   ].map(([x, y]) => ({ x, y }));
 
+const iconArrowPathPoints = size =>
+  [
+    [1 * size / 7, 3 * size / 6],
+    [2 * size / 7, 2 * size / 6],
+    [5 * size / 7, 2 * size / 6],
+    [6 * size / 7, 3 * size / 6]
+  ].map(([x, y]) => ({ x, y }));
+
+const iconArrowPathPointsUndo = size =>
+  [
+    [3 * size / 14, 3 * size / 12],
+    [2 * size / 14, 6 * size / 12],
+    [5 * size / 14, 7 * size / 12]
+  ].map(([x, y]) => ({ x, y }));
+
+const iconArrowPathPointsRedo = size =>
+  [
+    [11 * size / 14, 3 * size / 12],
+    [12 * size / 14, 6 * size / 12],
+    [9 * size / 14, 7 * size / 12]
+  ].map(([x, y]) => ({ x, y }));
+
 const IconPen = ({ color, size }) => (
   <Icon size={size}>
     <Path
@@ -83,6 +105,23 @@ const IconX = ({ color, size }) => (
   </Icon>
 );
 
+const IconArrow = ({ undo, color, size }) => (
+  <Icon size={size}>
+    <Path
+      points={iconArrowPathPoints(size)}
+      color={color}
+      thickness={size / 10}
+    />
+    <Path
+      points={
+        undo ? iconArrowPathPointsUndo(size) : iconArrowPathPointsRedo(size)
+      }
+      color={color}
+      thickness={size / 10}
+    />
+  </Icon>
+);
+
 export const toolIcons = {
   pen: <IconPen color={ICON_COLOR} size={ICON_SIZE} />,
   rectangle: <IconRectangle color={ICON_COLOR} size={ICON_SIZE} />,
@@ -102,3 +141,6 @@ export const thicknessIcon = thickness => (
 );
 
 export const clearIcon = <IconX color={ICON_COLOR} size={ICON_SIZE} />;
+
+export const undoIcon = <IconArrow undo color={ICON_COLOR} size={ICON_SIZE} />;
+export const redoIcon = <IconArrow color={ICON_COLOR} size={ICON_SIZE} />;

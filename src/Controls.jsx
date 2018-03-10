@@ -1,7 +1,13 @@
 import React, { Fragment as _ } from "react";
 import cxs from "cxs";
 import stylexs from "cxs/component";
-import { toolIcons, thicknessIcon, clearIcon } from "./icons";
+import {
+  toolIcons,
+  thicknessIcon,
+  clearIcon,
+  undoIcon,
+  redoIcon
+} from "./icons";
 import Point from "./modules/Canvas/Point";
 import Icon, { ICON_COLOR, ICON_SIZE } from "./Icon";
 
@@ -103,7 +109,7 @@ const UndoAndRedo = ({ direction, onUndo, onRedo, redoable, undoable }) => (
       color="white"
       onClick={onUndo}
     >
-      {"<=="}
+      {undoIcon}
     </Square>
     <Square
       visible={redoable}
@@ -112,7 +118,7 @@ const UndoAndRedo = ({ direction, onUndo, onRedo, redoable, undoable }) => (
       color="white"
       onClick={onRedo}
     >
-      {"==>"}
+      {redoIcon}
     </Square>
   </_>
 );

@@ -11,6 +11,8 @@ const Rectangle = ({ x0, y0, x1, y1, color, thickness }) => (
     stroke={color}
     strokeWidth={thickness}
     fill="transparent"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   />
 );
 

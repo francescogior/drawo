@@ -9,6 +9,8 @@ const Line = ({ x0, y0, x1, y1, color, thickness }) => (
     fill={"transparent"}
     strokeWidth={thickness}
     stroke={color}
+    strokeLinecap="round"
+    strokeLinejoin="round"
   />
 );
 
