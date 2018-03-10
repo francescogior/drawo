@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment as _ } from "react";
 import cxs from "cxs";
 import stylexs from "cxs/component";
 import { toolIcons, thicknessIcon, clearIcon } from "./icons";
@@ -8,7 +8,8 @@ import Icon, { ICON_COLOR, ICON_SIZE } from "./Icon";
 const makeView = stylexs("div");
 
 const Square = makeView(
-  ({ direction, size, children, selected, background, color }) => ({
+  ({ direction, size, children, selected, background, color, visible }) => ({
+    visibility: visible === false ? "hidden" : "visible",
     height: `${40 + (selected && direction === "row" ? 20 : 0)}px`,
     width: `${40 + (selected && direction === "column" ? 20 : 0)}px`,
     cursor: "pointer",
@@ -30,7 +31,7 @@ const Space = makeView(({ vertical, horizontal }) => ({
 }));
 
 const Colors = ({ direction, colors, selectedColor, setColor }) => (
-  <React.Fragment>
+  <_>
     {colors.map(color => (
       <Square
         direction={direction}
@@ -40,11 +41,11 @@ const Colors = ({ direction, colors, selectedColor, setColor }) => (
         onClick={() => setColor(color)}
       />
     ))}
-  </React.Fragment>
+  </_>
 );
 
 const Tools = ({ direction, tools, selectedTool, setTool }) => (
-  <React.Fragment>
+  <_>
     {tools.map(tool => (
       <Square
         direction={direction}
@@ -57,7 +58,7 @@ const Tools = ({ direction, tools, selectedTool, setTool }) => (
         {toolIcons[tool] || tool[0].toUpperCase()}
       </Square>
     ))}
-  </React.Fragment>
+  </_>
 );
 
 const Thicknesses = ({
@@ -66,7 +67,7 @@ const Thicknesses = ({
   selectedThickness,
   setThickness
 }) => (
-  <React.Fragment>
+  <_>
     {thicknesses.map(thickness => (
       <Square
         direction={direction}
@@ -79,7 +80,7 @@ const Thicknesses = ({
         {thicknessIcon(thickness)}
       </Square>
     ))}
-  </React.Fragment>
+  </_>
 );
 
 const Clear = ({ direction, onClear }) => (
@@ -91,6 +92,29 @@ const Clear = ({ direction, onClear }) => (
   >
     {clearIcon}
   </Square>
+);
+
+const UndoAndRedo = ({ direction, onUndo, onRedo, redoable, undoable }) => (
+  <_>
+    <Square
+      visible={undoable}
+      direction={direction}
+      background={"rgba(0,0,0,.8)"}
+      color="white"
+      onClick={onUndo}
+    >
+      {"<=="}
+    </Square>
+    <Square
+      visible={redoable}
+      direction={direction}
+      background={"rgba(0,0,0,.8)"}
+      color="white"
+      onClick={onRedo}
+    >
+      {"==>"}
+    </Square>
+  </_>
 );
 
 const Controls = ({
@@ -105,7 +129,11 @@ const Controls = ({
   thicknesses,
   selectedThickness,
   setThickness,
-  onClear
+  onClear,
+  onUndo,
+  onRedo,
+  redoable,
+  undoable
 }) => (
   <div className={className}>
     <Colors
@@ -139,6 +167,17 @@ const Controls = ({
       horizontal={direction === "row" ? 30 : 0}
     />
     <Clear direction={direction} onClear={onClear} />
+    <Space
+      vertical={direction === "column" ? 30 : 0}
+      horizontal={direction === "row" ? 30 : 0}
+    />
+    <UndoAndRedo
+      direction={direction}
+      onUndo={onUndo}
+      onRedo={onRedo}
+      redoable={redoable}
+      undoable={undoable}
+    />
   </div>
 );
 
