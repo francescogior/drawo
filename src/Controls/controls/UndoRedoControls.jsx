@@ -1,7 +1,7 @@
 import React, { Fragment as _ } from 'react'
 import { connect, update } from '../../modules/ReactApp/ReactApp'
 import { undoIcon, redoIcon } from '../../icons'
-import { getDirection, filterBeforeLastClear } from '../../utils'
+import { getDirection } from '../../utils'
 import Square from '../../UI/Square'
 
 const UndoAndRedoControls = connect(['drawings', 'undos', 'viewport'])(
@@ -9,7 +9,7 @@ const UndoAndRedoControls = connect(['drawings', 'undos', 'viewport'])(
     ({ viewport, onUndo, onRedo, undos, drawings }) => (
       <_>
         <Square
-          visible={filterBeforeLastClear(drawings).length > 0}
+          visible={drawings.length > 0}
           direction={getDirection(viewport)}
           background={'rgba(255,255,255,.8)'}
           color={'rgba(0,0,0,.8)'}
