@@ -5,7 +5,8 @@ import colors, { type Color } from './colors'
 import tools, { type Tool } from './tools'
 import thicknesses, { type Thickness } from './thicknesses'
 import Drawing from './Drawing'
-import { l } from './utils'
+import { l, filterBeforeLastClear, getDirection } from './utils'
+import PropTypes from 'prop-types'
 import { Squared } from './patterns'
 import createReactApp, {
   type Updater,
@@ -15,17 +16,7 @@ import createReactApp, {
 } from './modules/ReactApp/ReactApp'
 import cxs from 'cxs'
 import stylexs from 'cxs/component'
-import {
-  range,
-  findLastIndex,
-  propEq,
-  slice,
-  last,
-  concat,
-  append,
-  prepend,
-  head,
-} from 'ramda'
+import { range, slice, last, concat, append, prepend, head } from 'ramda'
 import { type Point, type DrawingType } from './types'
 
 // TODO something nicer
@@ -51,7 +42,11 @@ type PState = $Rest<State, {}>
 const windowWidth: number = window.innerWidth
 const windowHeight: number = window.innerHeight
 
-const config: Config = {}
+const config: Config = {
+  colors,
+  tools,
+  thicknesses,
+}
 const env: Env = {
   viewport: {
     width: windowWidth,
@@ -59,14 +54,13 @@ const env: Env = {
   },
 }
 
-const filterBeforeLastClear = (drawings) =>
-  slice(
-    findLastIndex(propEq('tool', 'clear'), drawings) + 1,
-    Infinity,
-    drawings,
-  )
-
-const initialState = (config: Config, env: Env): State => ({
+const initialState = (
+  { colors, tools, thicknesses }: Config,
+  env: Env,
+): State => ({
+  colors,
+  tools,
+  thicknesses,
   points: [],
   undos: [],
   drawings: [],
@@ -183,18 +177,13 @@ const renderApp: Render<State> = (
   {
     points,
     drawings,
+    undos,
+    viewport,
     selectedColor,
     selectedTool,
-    undos,
     selectedThickness,
-    viewport,
-    isColorMenuOpen,
-    isToolMenuOpen,
-    isThicknessMenuOpen,
   },
   {
-    setColor,
-    setTool,
     collectPoint,
     onDrawEnd,
     setThickness,
@@ -203,40 +192,12 @@ const renderApp: Render<State> = (
     onRedo,
     openColorMenu,
     closeColorMenu,
-    openToolMenu,
-    closeToolMenu,
     openThicknessMenu,
     closeThicknessMenu,
   },
 ) => (
   <div className="app">
-    <Controls
-      direction={viewport.width >= viewport.height ? 'row' : 'column'}
-      colors={colors}
-      selectedColor={selectedColor}
-      isColorMenuOpen={isColorMenuOpen}
-      openColorMenu={openColorMenu}
-      closeColorMenu={closeColorMenu}
-      setColor={setColor}
-      tools={tools}
-      selectedTool={selectedTool}
-      setTool={setTool}
-      isToolMenuOpen={isToolMenuOpen}
-      openToolMenu={openToolMenu}
-      closeToolMenu={closeToolMenu}
-      thicknesses={thicknesses}
-      selectedThickness={selectedThickness}
-      setThickness={setThickness}
-      isThicknessMenuOpen={isThicknessMenuOpen}
-      openThicknessMenu={openThicknessMenu}
-      closeThicknessMenu={closeThicknessMenu}
-      onClear={onClear}
-      onUndo={onUndo}
-      onRedo={onRedo}
-      redoable={undos.length > 0}
-      undoable={drawings.length > 0}
-      clearable={filterBeforeLastClear(drawings).length > 0}
-    />
+    <Controls />
     <Canvas
       className={cxs({ cursor: 'crosshair' })}
       width={viewport.width}
