@@ -19,9 +19,22 @@ import stylexs from 'cxs/component'
 import { range, slice, last, concat, append, prepend, head } from 'ramda'
 import { type Point, type DrawingType } from './types'
 
-// TODO something nicer
-let id = 0
-const makeId = () => id++
+import { parse, stringify } from './serializer'
+
+const save = (drawings) => {
+  window.location.hash = stringify(drawings)
+  return drawings
+}
+
+const { random, floor } = Math
+const makeId = () => {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split(
+    '',
+  )
+  let id = ''
+  while (id.length < 12) id += alphabet[floor(random() * alphabet.length)]
+  return id
+}
 
 type Config = {}
 type Env = { viewport: { width: number, height: number } }
@@ -48,6 +61,7 @@ const config: Config = {
   thicknesses,
 }
 const env: Env = {
+  hashString: window.location.hash.slice(1),
   viewport: {
     width: windowWidth,
     height: windowHeight,
@@ -63,7 +77,7 @@ const initialState = (
   thicknesses,
   points: [],
   undos: [],
-  drawings: [],
+  drawings: parse(env.hashString),
   selectedColor: colors[0],
   selectedTool: tools[0],
   selectedThickness: thicknesses[0],
@@ -128,22 +142,33 @@ const onDrawEnd = () => ({
 }: PState): PState => ({
   points: [],
   undos: [],
-  drawings: append({
-    id: makeId(),
-    points,
-    color: selectedColor,
-    tool: selectedTool,
-    thickness: selectedThickness,
-  })(drawings),
+  drawings: save(
+    append({
+      id: makeId(),
+      points,
+      color: selectedColor,
+      tool: selectedTool,
+      thickness: selectedThickness,
+    })(drawings),
+  ),
 })
 
-const onClear = () => ({ drawings }) => ({
+const onClear = () => ({
+  drawings,
+  selectedColor,
+  selectedTool,
+  selectedThickness,
+}) => ({
   undos: [],
-  drawings: append({
-    id: makeId(),
-    points: [],
-    tool: 'clear',
-  })(drawings),
+  drawings: save(
+    append({
+      id: makeId(),
+      points: [],
+      tool: 'clear',
+      color: selectedColor,
+      thickness: selectedThickness,
+    })(drawings),
+  ),
 })
 
 const onUndo = () => ({ undos, drawings }) => ({
