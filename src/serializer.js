@@ -21,8 +21,8 @@ const parsePoints = (pointsString) =>
 export const stringify = (drawings) =>
   btoa(
     drawings
-      .map((d) =>
-        [d.tool, d.color, d.thickness, d.id, stringifyPoints(d.points)].join(
+      .map(({ tool, color, thickness, id, points }) =>
+        [tool, color, thickness, id, stringifyPoints(points)].join(
           SEP3,
         ),
       )
