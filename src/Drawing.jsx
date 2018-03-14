@@ -26,12 +26,13 @@ export default function Drawing({
   points,
 }: Props): JSX.Element {
   const P0 = head(points) || {}
-  const P1 = head(points.slice(1)) || {}
   const { x: x0, y: y0 } = P0
+  if (!x0 && !y0) {
+    return null
+  }
+
+  const P1 = head(points.slice(1)) || {}
   const { x: x1, y: y1 } = P1
-
-  if (!x0 && !y0) return null
-
   if (!x1 && !y1) {
     return <Point x0={x0} y0={y0} thickness={thickness} color={color} />
   }
