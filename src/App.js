@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import Canvas from './modules/Canvas/Canvas'
 import Controls from './Controls'
 import colors, { type Color } from './colors'
 import tools, { type Tool } from './tools'
 import thicknesses, { type Thickness } from './thicknesses'
-import Drawing from './Drawing'
+import Whiteboard from './Whiteboard'
 import { l, filterBeforeLastClear, getDirection } from './utils'
 import PropTypes from 'prop-types'
 import { Squared } from './patterns'
@@ -309,34 +308,7 @@ const renderApp: Render<State> = (
         <span>maxMaxDiffsY: {maxMaxY}</span>
         <span>avgAvgDiffsY: {avgAvgY}</span>
       </Counter>
-      <Canvas
-        className={cxs({ cursor: 'crosshair' })}
-        width={viewport.width}
-        height={viewport.height}
-        onDraw={collectPoint}
-        onDrawEnd={onDrawEnd}
-        PatternBackground={() => <Squared size={30} />}
-      >
-        {filterBeforeLastClear(drawings).map(
-          ({ points, color, tool, thickness, id }) => (
-            <Drawing
-              key={id}
-              points={points}
-              color={color}
-              tool={tool}
-              thickness={thickness}
-            />
-          ),
-        )}
-
-        <Drawing
-          key="currentDrawing"
-          points={points}
-          color={selectedColor}
-          tool={selectedTool}
-          thickness={selectedThickness}
-        />
-      </Canvas>
+      <Whiteboard />
     </Screen>
   )
 }
