@@ -7,15 +7,17 @@ import { l, filterBeforeLastClear, getDirection } from './utils'
 import { Squared } from './patterns'
 
 export default connect([
+  'images',
   'viewport',
   'drawings',
   'points',
   'selectedColor',
   'selectedThickness',
   'selectedTool',
-])(update(['collectPoint', 'onDrawEnd'])(Whiteboard))
+])(update(['collectPoint', 'onDrawEnd', 'onImagePaste'])(Whiteboard))
 
 function Whiteboard({
+  images,
   viewport,
   drawings,
   points,
@@ -24,9 +26,11 @@ function Whiteboard({
   selectedTool,
   collectPoint,
   onDrawEnd,
+  onImagePaste,
 }) {
   return (
     <Canvas
+      onImagePaste={onImagePaste}
       className={cxs({ cursor: 'crosshair' })}
       width={viewport.width}
       height={viewport.height}
@@ -53,6 +57,14 @@ function Whiteboard({
         tool={selectedTool}
         thickness={selectedThickness}
       />
+
+      {images.map(({ src, width, height }) => (
+        <image
+          href={src}
+          height={height / (window.devicePixelRatio || 2)}
+          width={width / (window.devicePixelRatio || 2)}
+        />
+      ))}
     </Canvas>
   )
 }

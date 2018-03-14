@@ -44,6 +44,7 @@ const makeId = () => {
 type Config = {}
 type Env = { viewport: { width: number, height: number } }
 type State = {
+  images: { src: string, width: number, height: number }[],
   undos: DrawingType[],
   points: Point[],
   drawings: DrawingType[],
@@ -80,6 +81,7 @@ const initialState = (
   colors,
   tools,
   thicknesses,
+  images: [],
   points: [],
   undos: [],
   drawings: parse(env.hashString),
@@ -136,6 +138,13 @@ const setThickness = (thickness: Thickness) => (): PState => ({
 
 const setTool = (tool: Tool) => (): PState => ({
   selectedTool: tool,
+})
+
+const onImagePaste = (
+  base64Data: string,
+  { width, height }: { width: number, height: number },
+) => ({ images }: State): PState => ({
+  images: l(images.concat({ src: base64Data, height, width }), 'ehi ehi'),
 })
 
 const onDrawEnd = () => ({
@@ -201,6 +210,7 @@ const updaters = {
   closeToolMenu,
   openThicknessMenu,
   closeThicknessMenu,
+  onImagePaste,
 }
 
 const view = stylexs('div')
