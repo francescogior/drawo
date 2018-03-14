@@ -17,9 +17,15 @@ import createReactApp, {
 import cxs from 'cxs'
 import stylexs from 'cxs/component'
 import { range, slice, last, concat, append, prepend, head } from 'ramda'
+import * as R from 'ramda'
 import { type Point, type DrawingType } from './types'
 
 import { parse, stringify } from './serializer'
+
+// yes yes it is temp
+window.R = R
+
+const { round, abs, max, min } = Math
 
 const save = (drawings) => {
   window.location.hash = stringify(drawings)
@@ -198,6 +204,30 @@ const updaters = {
   closeThicknessMenu,
 }
 
+const view = stylexs('div')
+const Screen = view()
+const Counter = view({
+  position: 'absolute',
+  height: '50px',
+  right: '20px',
+  top: '20px',
+  marginLeft: 'auto',
+  textAlign: 'right',
+  ' span': {
+    padding: '20px',
+    background: 'rgba(255,255,255,.8)',
+    borderRadius: '5px',
+    marginTop: '30px',
+    marginBottom: '30px',
+    lineHeight: '50px',
+    zIndex: 1000,
+  },
+})
+
+const sum = (a, b) => a + b
+const diff = (a, b) => a - b
+const distance = (a, b) => abs(diff(a, b))
+
 const renderApp: Render<State> = (
   {
     points,
@@ -220,39 +250,96 @@ const renderApp: Render<State> = (
     openThicknessMenu,
     closeThicknessMenu,
   },
-) => (
-  <div className="app">
-    <Controls />
-    <Canvas
-      className={cxs({ cursor: 'crosshair' })}
-      width={viewport.width}
-      height={viewport.height}
-      onDraw={collectPoint}
-      onDrawEnd={onDrawEnd}
-      PatternBackground={() => <Squared size={30} />}
-    >
-      {filterBeforeLastClear(drawings).map(
-        ({ points, color, tool, thickness, id }) => (
-          <Drawing
-            key={id}
-            points={points}
-            color={color}
-            tool={tool}
-            thickness={thickness}
-          />
-        ),
-      )}
+) => {
+  const toX = (p) => p.x
+  const toY = (p) => p.y
+  const allPoints = R.flatten(drawings.map((d) => d.points)).concat(points)
+  const drawingsCounter = drawings.length
+  const pointsCounter = allPoints.length
+  const xSum = allPoints.map(toX).reduce(sum, 0)
+  const ySum = allPoints.map(toY).reduce(sum, 0)
 
-      <Drawing
-        key="currentDrawing"
-        points={points}
-        color={selectedColor}
-        tool={selectedTool}
-        thickness={selectedThickness}
-      />
-    </Canvas>
-  </div>
-)
+  const drawingLength = (drawing) => drawing.points.length
+  const xs = (drawing) => drawing.points.map(toX)
+  const ys = (drawing) => drawing.points.map(toY)
+  const drawingDiffsX = (drawing) => {
+    const xsd = xs(drawing)
+    return xsd.slice(0, -1).map((_, i) => distance(xsd[i + 1], xsd[i]))
+  }
+  const drawingDiffSumX = (drawing) => drawingDiffsX(drawing).reduce(sum, 0)
+  const drawingDiffsY = (drawing) => {
+    const ysd = ys(drawing)
+    return ysd.slice(0, -1).map((_, i) => distance(ysd[i + 1], ysd[i]))
+  }
+  const drawingDiffSumY = (drawing) => drawingDiffsY(drawing).reduce(sum, 0)
+  const drawingAvgDiffX = (drawing) =>
+    drawingDiffSumX(drawing) / drawingLength(drawing)
+  const drawingAvgDiffY = (drawing) =>
+    drawingDiffSumY(drawing) / drawingLength(drawing)
+
+  const drawingMaxDiffX = (drawing) => max(...drawingDiffsX(drawing))
+  const drawingMaxDiffY = (drawing) => max(...drawingDiffsY(drawing))
+
+  const maxMaxX = round(max(...drawings.map(drawingMaxDiffX)))
+  const avgMaxX = round(
+    drawings.map(drawingMaxDiffX).reduce(sum, 0) / drawingsCounter,
+  )
+  const maxAvgX = round(max(...drawings.map(drawingAvgDiffX)))
+  const avgAvgX = round(
+    drawings.map(drawingAvgDiffX).reduce(sum, 0) / drawingsCounter,
+  )
+
+  const maxMaxY = round(max(...drawings.map(drawingMaxDiffY)))
+  const avgMaxY = round(
+    drawings.map(drawingMaxDiffY).reduce(sum, 0) / drawingsCounter,
+  )
+  const maxAvgY = round(max(...drawings.map(drawingAvgDiffY)))
+  const avgAvgY = round(
+    drawings.map(drawingAvgDiffY).reduce(sum, 0) / drawingsCounter,
+  )
+
+  return (
+    <Screen>
+      <Controls />
+      <Counter>
+        <span>POINTS: {pointsCounter}</span>
+        <span>DRAWINGS: {drawingsCounter}</span>
+        <span>maxMaxDiffsX: {maxMaxX}</span>
+        <span>avgAvgDiffsX: {avgAvgX}</span>
+        <span>maxMaxDiffsY: {maxMaxY}</span>
+        <span>avgAvgDiffsY: {avgAvgY}</span>
+      </Counter>
+      <Canvas
+        className={cxs({ cursor: 'crosshair' })}
+        width={viewport.width}
+        height={viewport.height}
+        onDraw={collectPoint}
+        onDrawEnd={onDrawEnd}
+        PatternBackground={() => <Squared size={30} />}
+      >
+        {filterBeforeLastClear(drawings).map(
+          ({ points, color, tool, thickness, id }) => (
+            <Drawing
+              key={id}
+              points={points}
+              color={color}
+              tool={tool}
+              thickness={thickness}
+            />
+          ),
+        )}
+
+        <Drawing
+          key="currentDrawing"
+          points={points}
+          color={selectedColor}
+          tool={selectedTool}
+          thickness={selectedThickness}
+        />
+      </Canvas>
+    </Screen>
+  )
+}
 
 export default createReactApp({
   config,
