@@ -38,17 +38,7 @@ export default function Drawing({
   }
 
   return tool === 'pen' ? (
-    <React.Fragment>
-      {points.map(({ x, y }) => (
-        <Point x0={x} y0={y} thickness={thickness * 5} color={'red'} />
-      ))}
-      <Path
-        points={points}
-        color={color}
-        thickness={thickness}
-        simple={simple}
-      />
-    </React.Fragment>
+    <Path points={points} color={color} thickness={thickness} simple={simple} />
   ) : tool === 'rectangle' ? (
     <Rectangle
       thickness={thickness}
