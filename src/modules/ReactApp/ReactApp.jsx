@@ -57,7 +57,7 @@ export default <Config, Env, State>({
 
 const identity = (x) => x
 
-export const connect = (_slicer) => (Component) => {
+export const connect = (_slicer, mapProps = identity) => (Component) => {
   const slicer =
     typeof _slicer === 'undefined'
       ? identity
@@ -69,7 +69,9 @@ export const connect = (_slicer) => (Component) => {
       return true
     }
     render() {
-      return <Component {...slicer(this.context.state)} {...this.props} />
+      return (
+        <Component {...mapProps(slicer(this.context.state))} {...this.props} />
+      )
     }
   }
 
