@@ -26,3 +26,4 @@ export const getDirection = (viewport) =>
   viewport.width >= viewport.height ? 'row' : 'column'
 
 export const makeView = stylexs('div')
+export const view = stylexs('div')
