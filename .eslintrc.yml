@@ -1,0 +1,10 @@
+extends: airbnb
+plugins:
+  - react
+  - jsx-a11y
+  - import
+  - flow
+  - prettier
+rules:
+ semi: 0
+ react/prop-types: 0

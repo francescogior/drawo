@@ -1,13 +1,13 @@
 import React from 'react'
 import { equals } from 'ramda'
-import { makeView } from '../utils'
+import { view } from '../utils'
 import Square from './Square'
 
-const SelectMenu = makeView({
+const SelectMenu = view({
   position: 'absolute',
 })
 
-const SelectWrapper = makeView({
+const SelectWrapper = view({
   position: 'relative',
 })
 

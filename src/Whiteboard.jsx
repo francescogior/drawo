@@ -38,8 +38,9 @@ function Whiteboard({
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}
     >
-      {filterBeforeLastClear(drawings).map(
-        ({ points, color, tool, thickness, id }) => (
+      {filterBeforeLastClear(drawings).map(({
+ points, color, tool, thickness, id 
+}) => (
           <Drawing
             key={id}
             points={points}
@@ -47,8 +48,7 @@ function Whiteboard({
             tool={tool}
             thickness={thickness}
           />
-        ),
-      )}
+        ),)}
 
       <Drawing
         key="currentDrawing"

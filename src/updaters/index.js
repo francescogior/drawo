@@ -1,3 +1,4 @@
+// @flow
 import * as R from 'ramda'
 import { makeId } from '../utils'
 import { Point, Drawing } from '../types'
