@@ -1,6 +1,6 @@
-import React from "react";
+// @flow
+import type { Tool } from './domain'
 
-export type Tool = "pen" | "rectangle" | "circle" | "line";
-const tools: Tool[] = ["pen", "rectangle", "circle", "line"];
+const tools: Tool[] = ['pen', 'rectangle', 'circle', 'line']
 
-export default tools;
+export default tools

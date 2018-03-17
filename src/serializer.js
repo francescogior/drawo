@@ -1,4 +1,6 @@
-import { l } from './utils'
+// @flow
+// import { l } from './utils'
+import type { Drawing, Point } from './domain'
 
 const SEP1 = ','
 const SEP2 = ';'
@@ -7,10 +9,9 @@ const SEP4 = '£'
 
 const trueish = (x: mixed): boolean => !!x
 
-const stringifyPoints = (points) =>
-  points.map((p) => [p.x, p.y].join(SEP1)).join(SEP2)
+const stringifyPoints = (points: Point[]) => points.map(p => [p.x, p.y].join(SEP1)).join(SEP2)
 
-const parsePoints = (pointsString) =>
+const parsePoints = (pointsString): Point[] =>
   pointsString
     .split(SEP2)
     .filter(trueish)
@@ -19,25 +20,23 @@ const parsePoints = (pointsString) =>
       return { x: parseInt(x, 10), y: parseInt(y, 10) }
     })
 
-export const stringify = (drawings) =>
-  btoa(
-    drawings
-      .map(({ tool, color, thickness, id, points }) =>
-        [tool, color, thickness, id, stringifyPoints(points)].join(SEP3),
-      )
-      .join(SEP4),
-  )
+export const stringify = (drawings: Drawing[]) =>
+  btoa(drawings // eslint-disable-line no-undef
+    .map(({
+      tool, color, thickness, id, points,
+    }) =>
+      [tool, color, thickness, id, stringifyPoints(points)].join(SEP3))
+    .join(SEP4))
 
-export const parse = (drawingsString) =>
-  atob(drawingsString)
+export const parse = (drawingsString: string): Drawing[] =>
+  atob(drawingsString) // eslint-disable-line no-undef
     .split(SEP4)
     .filter(trueish)
     .map((drawingString) => {
-      const [tool, color, thickness, id, pointsString] = drawingString.split(
-        SEP3,
-      )
+      const [tool, color, thickness, id, pointsString] = drawingString.split(SEP3)
 
       return {
+        images: [],
         tool,
         color,
         thickness: parseInt(thickness, 10),

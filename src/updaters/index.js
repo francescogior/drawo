@@ -1,19 +1,17 @@
 // @flow
 import * as R from 'ramda'
 import { makeId } from '../utils'
-import { Point, Drawing } from '../types'
-
+import type { Point, Drawing, Tool, Color, Thickness } from '../domain'
+import type { State, PState } from '../State'
 import { stringify } from '../serializer'
 
-const save = (drawings) => {
-  window.location.hash = stringify(drawings)
+// TODO this would be a command
+const save = (drawings: Drawing[]): Drawing[] => {
+  window.location.hash = stringify(drawings) // eslint-disable-line no-undef
   return drawings
 }
 
-export const collectPoint = (point: Point) => ({
-  selectedTool,
-  points,
-}: PState): PState => ({
+export const collectPoint = (point: Point) => ({ selectedTool, points }: State): PState => ({
   points:
     selectedTool === 'pen'
       ? R.append(point, points)
@@ -69,44 +67,35 @@ export const onDrawEnd = () => ({
   selectedColor,
   selectedTool,
   selectedThickness,
-}: PState): PState => ({
+}: State): PState => ({
   points: [],
   undos: [],
-  drawings: save(
-    R.append({
-      id: makeId(),
-      points,
-      color: selectedColor,
-      tool: selectedTool,
-      thickness: selectedThickness,
-    })(drawings),
-  ),
+  drawings: save(R.append({
+    id: makeId(),
+    points,
+    color: selectedColor,
+    tool: selectedTool,
+    thickness: selectedThickness,
+  })(drawings)),
 })
 
-export const onClear = () => ({
-  drawings,
-  selectedColor,
-  selectedTool,
-  selectedThickness,
-}) => ({
+export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => ({
   undos: [],
-  drawings: save(
-    R.append({
-      id: makeId(),
-      points: [],
-      tool: 'clear',
-      color: selectedColor,
-      thickness: selectedThickness,
-    })(drawings),
-  ),
+  drawings: save(R.append({
+    id: makeId(),
+    points: [],
+    tool: 'clear',
+    color: selectedColor,
+    thickness: selectedThickness,
+  })(drawings)),
 })
 
-export const onUndo = () => ({ undos, drawings }) => ({
+export const onUndo = () => ({ undos, drawings }: State): PState => ({
   drawings: R.slice(0, -1)(drawings),
   undos: R.prepend(R.last(drawings))(undos),
 })
 
-export const onRedo = () => ({ undos, drawings }) => ({
+export const onRedo = () => ({ undos, drawings }: State): PState => ({
   drawings: R.append(R.head(undos))(drawings),
   undos: R.slice(1, Infinity)(undos),
 })

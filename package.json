@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "babel-eslint": "^8.2.2",
     "cxs": "^6.2.0",
+    "eslint-plugin-flowtype": "^2.46.1",
     "prettier": "^1.10.2",
     "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
@@ -27,7 +29,6 @@
   "devDependencies": {
     "eslint": "^4.18.2",
     "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-flow": "^2.29.1",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-prettier": "^2.6.0",

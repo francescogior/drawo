@@ -1,45 +1,26 @@
-import React, { Component } from 'react'
+// @flow
+import React from 'react'
 import Controls from './Controls'
-import colors, { type Color } from './colors'
-import tools, { type Tool } from './tools'
-import thicknesses, { type Thickness } from './thicknesses'
+import colors from './colors'
+import tools from './tools'
+import thicknesses from './thicknesses'
 import Whiteboard from './Whiteboard'
-import { l, filterBeforeLastClear, getDirection, makeId, view } from './utils'
-import PropTypes from 'prop-types'
-import { Squared } from './patterns'
-import createReactApp, {
-  type Updater,
-  type MakeInitialState,
-  type Render,
-  type Updaters,
-} from './modules/ReactApp/ReactApp'
-import * as R from 'ramda'
-import { type Point, type DrawingType } from './types'
+import { view } from './utils'
+import createReactApp from './modules/ReactApp/ReactApp'
+import type { Viewport, Color, Tool, Thickness } from './domain'
 import * as updaters from './updaters'
 import { parse } from './serializer'
+import type { State } from './State'
 
-// yes yes it is temp
-window.R = R
-
-type Config = {}
-type Env = { viewport: { width: number, height: number } }
-type State = {
-  images: { src: string, width: number, height: number }[],
-  undos: DrawingType[],
-  points: Point[],
-  drawings: DrawingType[],
-  selectedColor: Color,
-  selectedTool: Tool,
-  selectedThickness: Thickness,
-  isColorMenuOpen: boolean,
-  isToolMenuOpen: boolean,
-  isThicknessMenuOpen: boolean,
+type Config = {
+  colors: Color[],
+  tools: Tool[],
+  thicknesses: Thickness[],
 }
+type Env = { viewport: Viewport, hashString: string }
 
-type PState = $Rest<State, {}>
-
-const windowWidth: number = window.innerWidth
-const windowHeight: number = window.innerHeight
+const windowWidth: number = window.innerWidth // eslint-disable-line no-undef
+const windowHeight: number = window.innerHeight // eslint-disable-line no-undef
 
 const config: Config = {
   colors,
@@ -47,17 +28,15 @@ const config: Config = {
   thicknesses,
 }
 const env: Env = {
-  hashString: window.location.hash.slice(1),
+  hashString: window.location.hash.slice(1), // eslint-disable-line no-undef
   viewport: {
     width: windowWidth,
     height: windowHeight,
   },
 }
 
-const makeInitialState = (
-  { colors, tools, thicknesses }: Config,
-  env: Env,
-): State => ({
+// eslint-disable-next-line no-shadow
+const makeInitialState = ({ colors, tools, thicknesses }: Config, env: Env): State => ({
   colors,
   tools,
   thicknesses,
@@ -76,14 +55,12 @@ const makeInitialState = (
 
 const Screen = view()
 
-const App = () => {
-  return (
-    <Screen>
-      <Controls />
-      <Whiteboard />
-    </Screen>
-  )
-}
+const App = () => (
+  <Screen>
+    <Controls />
+    <Whiteboard />
+  </Screen>
+)
 
 export default createReactApp({
   config,

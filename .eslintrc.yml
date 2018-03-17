@@ -1,10 +1,29 @@
-extends: airbnb
+extends: 
+  - airbnb
+  - plugin:flowtype/recommended
 plugins:
   - react
   - jsx-a11y
   - import
-  - flow
+  - flowtype
   - prettier
 rules:
- semi: 0
- react/prop-types: 0
+  max-len:
+    - 2
+    -
+      code: 120
+  semi:
+    - 2
+    - never
+  no-nested-ternary: 0
+  react/prop-types: 0
+  react/jsx-filename-extension: 0
+  react/sort-comp:
+    - 2
+    - order:
+      - type-annotations
+      - static-methods
+      - lifecycle
+      - everything-else
+      - render
+
