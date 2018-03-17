@@ -3,6 +3,7 @@ import { connect, update } from '../../modules/ReactApp/ReactApp'
 import Square from '../../UI/Square'
 import Select from '../../UI/Select'
 
+// eslint-disable-next-line max-len
 const ColorsControls = connect(['colors', 'selectedColor', 'isColorMenuOpen'])(update(['setColor', 'openColorMenu', 'closeColorMenu'])(({
   isColorMenuOpen, selectedColor, colors, setColor, closeColorMenu, openColorMenu,
 }) => (

@@ -66,6 +66,7 @@ export default createReactApp({
   config,
   env,
   makeInitialState,
+  // $FlowIssue boh
   updaters,
   render: App,
 })

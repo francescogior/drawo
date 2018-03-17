@@ -24,8 +24,7 @@ export const stringify = (drawings: Drawing[]) =>
   btoa(drawings // eslint-disable-line no-undef
     .map(({
       tool, color, thickness, id, points,
-    }) =>
-      [tool, color, thickness, id, stringifyPoints(points)].join(SEP3))
+    }) => [tool, color, thickness, id, stringifyPoints(points)].join(SEP3))
     .join(SEP4))
 
 export const parse = (drawingsString: string): Drawing[] =>
@@ -37,6 +36,7 @@ export const parse = (drawingsString: string): Drawing[] =>
 
       return {
         images: [],
+        // $FlowIssue boh
         tool,
         color,
         thickness: parseInt(thickness, 10),

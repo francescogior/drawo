@@ -1,6 +1,6 @@
 // @flow
 import React, { Component, type ComponentType } from 'react'
-import { map, equals, pick } from 'ramda'
+import { map, pick } from 'ramda'
 import PropTypes from 'prop-types'
 import { identity } from '../../utils'
 
@@ -56,25 +56,18 @@ export default function reactApp<Config, Env, State>({
   return App
 }
 
-type SlicerFn<State> = State => $Rest<State, {}>
-type SlicerLiteral<State> = $Keys<State>[]
-type Slicer<State> = SlicerFn<State> | SlicerLiteral<State>
+type SlicerFn<Obj> = Obj => $Rest<Obj, {}>
+type SlicerLiteral<Obj> = $Keys<Obj>[]
+type Slicer<Obj> = SlicerFn<Obj> | SlicerLiteral<Obj>
 
-type MapProps<State, ComponentToConnectProps> = (
-  $Rest<State, {}>,
-) => $Rest<ComponentToConnectProps, {}>
-
-export type Connect<State, ComponentProps> = (
-  Slicer<State>,
-  MapProps<State>,
-) => (ComponentType<ComponentProps>) => ComponentType<{| ...ComponentProps, ...$Rest<State, {}> |}>
+type MapProps<State, ComponentToConnectProps> = ($Rest<State, {}>) => $Rest<ComponentToConnectProps, {}>
 
 export const connect = <State, ComponentProps, ComponentToConnectProps>(
   _slicer: Slicer<State>,
+  // $FlowIssue boh
   mapProps: MapProps<State, ComponentToConnectProps> = identity,
 ) => (ComponentToConnect: ComponentType<ComponentToConnectProps>): ComponentType<ComponentProps> => {
-  const slicer =
-    typeof _slicer === 'undefined' ? identity : Array.isArray(_slicer) ? pick(_slicer) : _slicer
+  const slicer = typeof _slicer === 'undefined' ? identity : Array.isArray(_slicer) ? pick(_slicer) : _slicer
 
   // eslint-disable-next-line react/no-multi-comp
   class ConnectedComponent extends React.Component<ComponentProps> {
@@ -96,11 +89,12 @@ export const connect = <State, ComponentProps, ComponentToConnectProps>(
   return ConnectedComponent
 }
 
-export const update = <Updaters, ComponentProps, ComponentToUpdateProps>(
-  _slicer: Slicer<Updaters>,
+export const update = <State, ComponentProps, ComponentToUpdateProps>(
+  _slicer: Slicer<Updaters<State>>,
+  // $FlowIssue boh
+  mapUpdaters: MapProps<Updaters<State>, ComponentToUpdateProps> = identity,
 ) => (ComponentToUpdate: ComponentType<ComponentToUpdateProps>): ComponentType<ComponentProps> => {
-  const slicer =
-    typeof _slicer === 'undefined' ? identity : Array.isArray(_slicer) ? pick(_slicer) : _slicer
+  const slicer = typeof _slicer === 'undefined' ? identity : Array.isArray(_slicer) ? pick(_slicer) : _slicer
 
   // eslint-disable-next-line react/no-multi-comp
   class UpdatableComponent extends React.Component<ComponentProps> {
@@ -112,7 +106,7 @@ export const update = <Updaters, ComponentProps, ComponentToUpdateProps>(
     }
 
     render() {
-      return <ComponentToUpdate {...slicer(this.context.updaters)} {...this.props} />
+      return <ComponentToUpdate {...mapUpdaters(slicer(this.context.updaters))} {...this.props} />
     }
   }
 

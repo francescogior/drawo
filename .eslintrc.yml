@@ -12,6 +12,7 @@ rules:
     - 2
     -
       code: 120
+      tabWidth: 2
   semi:
     - 2
     - never
