@@ -1,19 +1,24 @@
+// @flow
 import React from 'react'
 
 let listener
 
+// naive type
+type Blob = mixed
+type ClipboardData = { items: { getAsFile: () => Blob } }
+type PasteEvent = { clipboardData: ClipboardData }
+
+type PngBase64 = string
+
 function listenPaste(callback) {
+  // no more than one listener
   if (listener) return
 
   listener = window.addEventListener(
     'paste',
-    function(e) {
+    async (e) => {
       // Handle the event
-      retrieveImageFromClipboardAsBase64(e, function(
-        imageDataBase64,
-        width,
-        height,
-      ) {
+      retrieveImageFromClipboardAsBase64(e, (imageDataBase64, width, height) => {
         // If there's an image, open it in the browser as a new window :)
         if (imageDataBase64) {
           // data:image/png;base64,iVBORw0KGgoAAAAN......
@@ -24,71 +29,73 @@ function listenPaste(callback) {
     false,
   )
 
+  async function createImage(blob: Blob) {
+    const img = new Image()
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const image = await new Promise((resolve) => {})
+    img.onLoad = function () {
+      canvas.width = img.width
+      canvas.height = img.height
+
+      // Draw the image
+      ctx.drawImage(img, 0, 0)
+
+      // Execute callback with the base64 URI of the image
+      if (typeof callback === 'function') {
+        callback(canvas.toDataURL('image/png'), img.width, img.height)
+      }
+    }
+  }
+
   /**
    * This handler retrieves the images from the clipboard as a base64 string and returns it in a callback.
    *
    * @param pasteEvent
    * @param callback
    */
-  function retrieveImageFromClipboardAsBase64(
-    pasteEvent,
-    callback,
-    imageFormat,
+  async function retrieveImageFromClipboardAsBase64(
+    pasteEvent: PasteEvent,
+    callback: PngBase64 => void,
+    imageFormat?: string,
   ) {
-    if (pasteEvent.clipboardData == false) {
-      if (typeof callback == 'function') {
-        callback(undefined)
-      }
-    }
+    const { clipboardData } = pasteEvent
+    if (clipboardData == null) return
+    const { items = [] } = clipboardData
+    Array.from(items).forEach((item) => {
+      if (item.type.indexOf('image') > -1) {
+        const blob = item.getAsFile()
 
-    var items = pasteEvent.clipboardData.items
+        // Create an abstract canvas and get context
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
 
-    if (items == undefined) {
-      if (typeof callback == 'function') {
-        callback(undefined)
-      }
-    }
+        // Create an image
+        const img = new Image()
 
-    for (var i = 0; i < items.length; i++) {
-      // Skip content if not image
-      if (items[i].type.indexOf('image') == -1) continue
-      // Retrieve image on clipboard as blob
+        // Once the image loads, render the img on the canvas
+        img.onload = function () {
+          // Update dimensions of the canvas with the dimensions of the image
+          canvas.width = this.width
+          canvas.height = this.height
 
-      var blob = items[i].getAsFile()
+          // Draw the image
+          ctx.drawImage(img, 0, 0)
 
-      // Create an abstract canvas and get context
-      var mycanvas = document.createElement('canvas')
-      var ctx = mycanvas.getContext('2d')
-
-      // Create an image
-      var img = new Image()
-
-      // Once the image loads, render the img on the canvas
-      img.onload = function() {
-        // Update dimensions of the canvas with the dimensions of the image
-        mycanvas.width = this.width
-        mycanvas.height = this.height
-
-        // Draw the image
-        ctx.drawImage(img, 0, 0)
-
-        // Execute callback with the base64 URI of the image
-        if (typeof callback == 'function') {
-          callback(
-            mycanvas.toDataURL(imageFormat || 'image/png'),
-            img.width,
-            img.height,
-          )
+          // Execute callback with the base64 URI of the image
+          if (typeof callback === 'function') {
+            callback(canvas.toDataURL(imageFormat || 'image/png'), img.width, img.height)
+          }
         }
+        const URLObj = window.URL || window.webkitURL
+
+        // Creates a DOMString containing a URL representing the object given in the parameter
+        // namely the original Blob
+        img.src = URLObj.createObjectURL(blob)
       }
+    })
 
-      // Crossbrowser support for URL
-      var URLObj = window.URL || window.webkitURL
-
-      // Creates a DOMString containing a URL representing the object given in the parameter
-      // namely the original Blob
-      img.src = URLObj.createObjectURL(blob)
-    }
+    // Crossbrowser support for URL
   }
 }
 

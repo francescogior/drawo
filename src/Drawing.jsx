@@ -1,15 +1,14 @@
+// @flow
 import React from 'react'
 import Rectangle from './modules/Canvas/Rectangle'
 import Path from './modules/Canvas/Path'
 import Circle from './modules/Canvas/Circle'
 import Point from './modules/Canvas/Point'
 import Line from './modules/Canvas/Line'
-import { head, last } from 'ramda'
-import { type Tool } from './tools'
-import { type Color } from './colors'
-import { type Thickness } from './thicknesses'
-import { type Point as PointType } from './types'
+import { head } from 'ramda'
+import type { Point as PointType, Tool, Color, Thickness } from './domain'
 import { l } from './utils'
+
 export type Props = {|
   simple?: boolean,
   tool: Tool,
@@ -19,12 +18,8 @@ export type Props = {|
 |}
 
 export default function Drawing({
-  simple,
-  tool,
-  color,
-  thickness,
-  points,
-}: Props): JSX.Element {
+  simple = false, tool, color, thickness, points,
+}: Props) {
   const P0 = head(points) || {}
   const { x: x0, y: y0 } = P0
   if (!x0 && !y0) {
@@ -40,23 +35,9 @@ export default function Drawing({
   return tool === 'pen' ? (
     <Path points={points} color={color} thickness={thickness} simple={simple} />
   ) : tool === 'rectangle' ? (
-    <Rectangle
-      thickness={thickness}
-      color={color}
-      x0={x0}
-      y0={y0}
-      x1={x1}
-      y1={y1}
-    />
+    <Rectangle thickness={thickness} color={color} x0={x0} y0={y0} x1={x1} y1={y1} />
   ) : tool === 'circle' ? (
-    <Circle
-      thickness={thickness}
-      color={color}
-      x0={x0}
-      y0={y0}
-      x1={x1}
-      y1={y1}
-    />
+    <Circle thickness={thickness} color={color} x0={x0} y0={y0} x1={x1} y1={y1} />
   ) : tool === 'line' ? (
     <Line thickness={thickness} color={color} x0={x0} y0={y0} x1={x1} y1={y1} />
   ) : (
