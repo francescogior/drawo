@@ -10,6 +10,7 @@ export type State = {|
   points: Point[],
   dudloSize: number,
   drawings: Drawing[],
+  isDrawing: boolean,
   selectedColor: Color,
   selectedTool: Tool,
   selectedThickness: Thickness,

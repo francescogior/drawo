@@ -38,6 +38,7 @@ const makeInitialState = (
   { colors, tools, thicknesses }: Config,
   env: Env,
 ): State => ({
+  isDrawing: false,
   colors,
   tools,
   thicknesses,

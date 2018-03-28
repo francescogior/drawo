@@ -11,7 +11,11 @@ const save = (drawings: Drawing[]): Drawing[] => {
   return drawings
 }
 
-export const collectPoint = (point: Point) => ({ selectedTool, points }: State): PState => ({
+export const collectPoint = (point: Point) => ({
+  selectedTool,
+  points,
+}: State): PState => ({
+  isDrawing: true,
   points:
     selectedTool === 'pen'
       ? R.append(point, points)
@@ -68,26 +72,35 @@ export const onDrawEnd = () => ({
   selectedTool,
   selectedThickness,
 }: State): PState => ({
+  isDrawing: false,
   points: [],
   undos: [],
-  drawings: save(R.append({
-    id: makeId(),
-    points,
-    color: selectedColor,
-    tool: selectedTool,
-    thickness: selectedThickness,
-  })(drawings)),
+  drawings: save(
+    R.append({
+      id: makeId(),
+      points,
+      color: selectedColor,
+      tool: selectedTool,
+      thickness: selectedThickness,
+    })(drawings),
+  ),
 })
 
-export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => ({
+export const onClear = () => ({
+  drawings,
+  selectedColor,
+  selectedThickness,
+}: State): PState => ({
   undos: [],
-  drawings: save(R.append({
-    id: makeId(),
-    points: [],
-    tool: 'clear',
-    color: selectedColor,
-    thickness: selectedThickness,
-  })(drawings)),
+  drawings: save(
+    R.append({
+      id: makeId(),
+      points: [],
+      tool: 'clear',
+      color: selectedColor,
+      thickness: selectedThickness,
+    })(drawings),
+  ),
 })
 
 export const onUndo = () => ({ undos, drawings }: State): PState => ({

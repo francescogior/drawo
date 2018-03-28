@@ -12,11 +12,16 @@ const Square = makeView(
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    opacity: 0.7,
     background,
     ':active': {
       transform: 'scale(.9, .9)',
     },
-    boxShadow: `0 0 10px rgba(0,0,0,.3)`,
+    ':hover': {
+      opacity: 1,
+    },
+    borderRight: '1px solid rgba(0,0,0,.1)',
+    borderBottom: '1px solid rgba(0,0,0,.1)',
     color,
   }),
 )

@@ -1,31 +1,34 @@
-import React from 'react';
-import { view } from '../utils';
+import React from 'react'
 
-import ClearControls from './controls/ClearControls';
-import UndoRedoControls from './controls/UndoRedoControls';
-import ThicknessesControls from './controls/ThicknessesControls';
-import ColorsControls from './controls/ColorsControls';
-import ToolsControls from './controls/ToolsControls';
+import { connect } from '../modules/ReactApp/ReactApp'
+import { view } from '../utils'
+
+import ClearControls from './controls/ClearControls'
+import UndoRedoControls from './controls/UndoRedoControls'
+import ThicknessesControls from './controls/ThicknessesControls'
+import ColorsControls from './controls/ColorsControls'
+import ToolsControls from './controls/ToolsControls'
 
 const ControlsWrapper = view(({ direction }) => ({
   position: 'absolute',
   zIndex: 1,
   display: 'flex',
   flexDirection: direction,
-}));
+}))
 
-const Controls = () => (
-  <ControlsWrapper>
-    <ColorsControls />
+const Controls = ({ isDrawing }) =>
+  !isDrawing && (
+    <ControlsWrapper>
+      <ColorsControls />
 
-    <ToolsControls />
+      <ToolsControls />
 
-    <ThicknessesControls />
+      <ThicknessesControls />
 
-    <ClearControls />
+      <ClearControls />
 
-    <UndoRedoControls />
-  </ControlsWrapper>
-);
+      <UndoRedoControls />
+    </ControlsWrapper>
+  )
 
-export default Controls;
+export default connect(['isDrawing'])(Controls)
