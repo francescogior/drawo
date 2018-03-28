@@ -4,14 +4,14 @@ import { map, pick } from 'ramda'
 import PropTypes from 'prop-types'
 import { identity } from '../../utils'
 
-export type Updater<State> = any => State => State
+export type Updater<State> = (any) => (State) => State
 export type Updaters<State> = { [string]: Updater<State> }
 export type MakeInitialState<Config, Env, State> = (Config, Env) => State
 export type Render<State> = (State, Updaters<State>) => any
 
 type RAProps<Config, Env, State> = {
   config: Config,
-  env: Env,
+  makeEnv: () => Env,
   makeInitialState: MakeInitialState<Config, Env, State>,
   updaters: Updaters<State>,
   render: Render<State>,
@@ -19,15 +19,19 @@ type RAProps<Config, Env, State> = {
 
 export default function reactApp<Config, Env, State>({
   config,
-  env,
+  makeEnv,
   makeInitialState,
   updaters,
   render,
 }: RAProps<Config, Env, State>) {
-  class App extends Component<void, State> {
-    updaters: any => void
+  class App extends Component<void, ?State> {
+    updaters: (any) => void
 
-    state = makeInitialState(config, env)
+    state = null
+
+    componentDidMount() {
+      this.setState(makeInitialState(config, makeEnv()))
+    }
 
     getChildContext() {
       return {
@@ -37,37 +41,45 @@ export default function reactApp<Config, Env, State>({
     }
 
     updaters = map(
-      updater => (...params) => {
+      (updater) => (...params) => {
         this.setState(updater(...params), () => {})
       },
       updaters,
     )
 
     render() {
+      if (this.state === null) return <div />
       return render(this.state, this.updaters)
     }
   }
 
   App.childContextTypes = {
-    state: PropTypes.object.isRequired,
+    state: PropTypes.object,
     updaters: PropTypes.object.isRequired,
   }
 
   return App
 }
 
-type SlicerFn<Obj> = Obj => $Rest<Obj, {}>
+type SlicerFn<Obj> = (Obj) => $Rest<Obj, {}>
 type SlicerLiteral<Obj> = $Keys<Obj>[]
 type Slicer<Obj> = SlicerFn<Obj> | SlicerLiteral<Obj>
 
-type MapProps<State, ComponentToConnectProps> = ($Rest<State, {}>) => $Rest<ComponentToConnectProps, {}>
+type MapProps<State, ComponentToConnectProps> = (
+  $Rest<State, {}>,
+) => $Rest<ComponentToConnectProps, {}>
 
 export const connect = <State, ComponentProps, ComponentToConnectProps>(
   _slicer: Slicer<State>,
   // $FlowIssue boh
   mapProps: MapProps<State, ComponentToConnectProps> = identity,
-) => (ComponentToConnect: ComponentType<ComponentToConnectProps>): ComponentType<ComponentProps> => {
-  const slicer = typeof _slicer === 'undefined' ? identity : Array.isArray(_slicer) ? pick(_slicer) : _slicer
+) => (
+  ComponentToConnect: ComponentType<ComponentToConnectProps>,
+): ComponentType<ComponentProps> => {
+  const slicer =
+    typeof _slicer === 'undefined'
+      ? identity
+      : Array.isArray(_slicer) ? pick(_slicer) : _slicer
 
   // eslint-disable-next-line react/no-multi-comp
   class ConnectedComponent extends React.Component<ComponentProps> {
@@ -78,7 +90,12 @@ export const connect = <State, ComponentProps, ComponentToConnectProps>(
       return true // TODO obv
     }
     render() {
-      return <ComponentToConnect {...mapProps(slicer(this.context.state))} {...this.props} />
+      return (
+        <ComponentToConnect
+          {...mapProps(slicer(this.context.state))}
+          {...this.props}
+        />
+      )
     }
   }
 
@@ -93,8 +110,13 @@ export const update = <State, ComponentProps, ComponentToUpdateProps>(
   _slicer: Slicer<Updaters<State>>,
   // $FlowIssue boh
   mapUpdaters: MapProps<Updaters<State>, ComponentToUpdateProps> = identity,
-) => (ComponentToUpdate: ComponentType<ComponentToUpdateProps>): ComponentType<ComponentProps> => {
-  const slicer = typeof _slicer === 'undefined' ? identity : Array.isArray(_slicer) ? pick(_slicer) : _slicer
+) => (
+  ComponentToUpdate: ComponentType<ComponentToUpdateProps>,
+): ComponentType<ComponentProps> => {
+  const slicer =
+    typeof _slicer === 'undefined'
+      ? identity
+      : Array.isArray(_slicer) ? pick(_slicer) : _slicer
 
   // eslint-disable-next-line react/no-multi-comp
   class UpdatableComponent extends React.Component<ComponentProps> {
@@ -106,7 +128,12 @@ export const update = <State, ComponentProps, ComponentToUpdateProps>(
     }
 
     render() {
-      return <ComponentToUpdate {...mapUpdaters(slicer(this.context.updaters))} {...this.props} />
+      return (
+        <ComponentToUpdate
+          {...mapUpdaters(slicer(this.context.updaters))}
+          {...this.props}
+        />
+      )
     }
   }
 

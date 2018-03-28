@@ -28,13 +28,12 @@ class Canvas extends Component {
     background: 'transparent',
   }
 
-  componentDidMount() {
-    this.readyToStartDraw()
-  }
-
   readyToStartDraw = () => {
     this.canvas.addEventListener('mousedown', this.onDrawStart)
     this.canvas.addEventListener('touchstart', this.onDrawStart)
+  }
+  componentDidMount() {
+    this.readyToStartDraw()
   }
 
   notReadyToStartDraw = () => {
@@ -125,4 +124,4 @@ class Canvas extends Component {
     )
   }
 }
-export default paster(Canvas)
+export default Canvas

@@ -38,9 +38,8 @@ function Whiteboard({
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}
     >
-      {filterBeforeLastClear(drawings).map(({
- points, color, tool, thickness, id 
-}) => (
+      {filterBeforeLastClear(drawings).map(
+        ({ points, color, tool, thickness, id }) => (
           <Drawing
             key={id}
             points={points}
@@ -48,7 +47,8 @@ function Whiteboard({
             tool={tool}
             thickness={thickness}
           />
-        ),)}
+        ),
+      )}
 
       <Drawing
         key="currentDrawing"
@@ -61,8 +61,8 @@ function Whiteboard({
       {images.map(({ src, width, height }) => (
         <image
           href={src}
-          height={height / (window.devicePixelRatio || 2)}
-          width={width / (window.devicePixelRatio || 2)}
+          height={height / ((window && (window.devicePixelRatio || 2)) || 500)}
+          width={width / ((window && (window.devicePixelRatio || 2)) || 500)}
         />
       ))}
     </Canvas>

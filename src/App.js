@@ -19,24 +19,24 @@ type Config = {
 }
 type Env = { viewport: Viewport, hashString: string }
 
-const windowWidth: number = window.innerWidth // eslint-disable-line no-undef
-const windowHeight: number = window.innerHeight // eslint-disable-line no-undef
-
 const config: Config = {
   colors,
   tools,
   thicknesses,
 }
-const env: Env = {
-  hashString: window.location.hash.slice(1), // eslint-disable-line no-undef
+const makeEnv: () => Env = () => ({
+  hashString: window.location.hash.slice(1),
   viewport: {
-    width: windowWidth,
-    height: windowHeight,
+    width: window.innerWidth || 500,
+    height: window.innerHeight || 500,
   },
-}
+})
 
 // eslint-disable-next-line no-shadow
-const makeInitialState = ({ colors, tools, thicknesses }: Config, env: Env): State => ({
+const makeInitialState = (
+  { colors, tools, thicknesses }: Config,
+  env: Env,
+): State => ({
   colors,
   tools,
   thicknesses,
@@ -64,7 +64,7 @@ const App = () => (
 
 export default createReactApp({
   config,
-  env,
+  makeEnv,
   makeInitialState,
   // $FlowIssue boh
   updaters,
