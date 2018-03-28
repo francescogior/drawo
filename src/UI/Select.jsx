@@ -22,13 +22,8 @@ const Select = ({
   color = 'white',
   background,
 }) => (
-  <SelectWrapper>
-    <Square
-      direction={direction}
-      color={color}
-      onClick={onMenuOpen}
-      background={background}
-    >
+  <SelectWrapper onMouseOver={onMenuOpen} onMouseLeave={onMenuClose}>
+    <Square direction={direction} color={color} background={background}>
       {elements.find((el) => equals(el.value, selectedValue)).label}
     </Square>
     {isMenuOpen && (
