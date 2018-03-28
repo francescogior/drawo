@@ -7,8 +7,8 @@ import { l, filterBeforeLastClear, getDirection } from './utils'
 import { Squared } from './patterns'
 
 export default connect([
+  'doodloSize',
   'images',
-  'viewport',
   'drawings',
   'points',
   'selectedColor',
@@ -18,7 +18,7 @@ export default connect([
 
 function Whiteboard({
   images,
-  viewport,
+  doodloSize,
   drawings,
   points,
   selectedColor,
@@ -32,8 +32,8 @@ function Whiteboard({
     <Canvas
       onImagePaste={onImagePaste}
       className={cxs({ cursor: 'crosshair' })}
-      width={viewport.width}
-      height={viewport.height}
+      width={doodloSize}
+      height={doodloSize}
       onDraw={collectPoint}
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}

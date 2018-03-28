@@ -8,6 +8,7 @@ export type State = {|
   images: { src: string, width: number, height: number }[],
   undos: Drawing[],
   points: Point[],
+  dudloSize: number,
   drawings: Drawing[],
   selectedColor: Color,
   selectedTool: Tool,

@@ -20,6 +20,7 @@ type Config = {
 type Env = { viewport: Viewport, hashString: string }
 
 const config: Config = {
+  doodloSize: 500,
   colors,
   tools,
   thicknesses,
@@ -40,6 +41,7 @@ const makeInitialState = (
   colors,
   tools,
   thicknesses,
+  doodloSize: 500,
   images: [],
   points: [],
   undos: [],
@@ -53,12 +55,28 @@ const makeInitialState = (
   isThicknessMenuOpen: false,
 })
 
-const Screen = view()
+const Screen = view({
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  margin: 0,
+  padding: 0,
+  overflow: 'hidden',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+const Doodlo = view({
+  display: 'flex',
+})
 
 const App = () => (
   <Screen>
-    <Controls />
-    <Whiteboard />
+    <Doodlo>
+      <Controls />
+      <Whiteboard />
+    </Doodlo>
   </Screen>
 )
 
