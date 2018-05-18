@@ -86,6 +86,8 @@ export const onDrawEnd = () => ({
   ),
 })
 
+console.log('bos')
+
 export const onClear = () => ({
   drawings,
   selectedColor,
