@@ -1,2 +1,3 @@
-export type Clear = "clear";
-export const clear: Clear = "clear";
+// @flow
+export type Clear = 'clear'
+export const clear: Clear = 'clear'

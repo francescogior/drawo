@@ -1,9 +1,10 @@
 import React from 'react'
 import cxs from 'cxs'
+
 import { connect, update } from './modules/ReactApp/ReactApp'
 import Canvas from './modules/Canvas/Canvas'
 import Drawing from './Drawing'
-import { l, filterBeforeLastClear, getDirection } from './utils'
+import { filterBeforeLastClear } from './utils'
 import { Squared } from './patterns'
 
 export default connect([
@@ -14,7 +15,7 @@ export default connect([
   'selectedColor',
   'selectedThickness',
   'selectedTool',
-])(update(['collectPoint', 'onDrawEnd', 'onImagePaste'])(Whiteboard))
+])(update(['collectPoint', 'onDrawEnd', 'onImagePaste'])(Whiteboard)) // eslint-disable-line no-use-before-define
 
 function Whiteboard({
   images,
@@ -39,16 +40,16 @@ function Whiteboard({
       PatternBackground={() => <Squared size={30} />}
     >
       {filterBeforeLastClear(drawings).map(({
- points, color, tool, thickness, id 
+ points: drawingPoints, color, tool, thickness, id,
 }) => (
-          <Drawing
-            key={id}
-            points={points}
-            color={color}
-            tool={tool}
-            thickness={thickness}
-          />
-        ),)}
+  <Drawing
+    key={id}
+    points={drawingPoints}
+    color={color}
+    tool={tool}
+    thickness={thickness}
+  />
+        ))}
 
       <Drawing
         key="currentDrawing"
@@ -61,8 +62,8 @@ function Whiteboard({
       {images.map(({ src, width, height }) => (
         <image
           href={src}
-          height={height / (window.devicePixelRatio || 2)}
-          width={width / (window.devicePixelRatio || 2)}
+          height={height / (window.devicePixelRatio || 2)} // eslint-disable-line no-undef
+          width={width / (window.devicePixelRatio || 2)} // eslint-disable-line no-undef
         />
       ))}
     </Canvas>

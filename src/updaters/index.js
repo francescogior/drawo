@@ -1,21 +1,19 @@
 // @flow
 import * as R from 'ramda'
+
 import { makeId } from '../utils'
-import type { Point, Drawing, Tool, Color, Thickness } from '../domain'
+import type { Point, Tool, Color, Thickness } from '../domain'
 import type { State, PState } from '../State'
-import { stringify } from '../serializer'
+// import { stringify } from '../serializer'
 
 // TODO this would be a command
-const save = (drawings: Drawing[]): Drawing[] => {
-  window.location.hash = stringify(drawings) // eslint-disable-line no-undef
-  return drawings
-}
+// const save = (drawings: Drawing[]): Drawing[] => {
+//   window.location.hash = stringify(drawings) // eslint-disable-line no-undef
+//   return drawings
+// }
 
 export const collectPoint = (point: Point) => ({ selectedTool, points }: State): PState => ({
-  points:
-    selectedTool === 'pen'
-      ? R.append(point, points)
-      : points.length === 0 ? [point] : [points[0], point],
+  points: selectedTool === 'pen' ? R.append(point, points) : points.length === 0 ? [point] : [points[0], point],
 })
 
 export const setColor = (color: Color) => (): PState => ({
@@ -54,10 +52,9 @@ export const setTool = (tool: Tool) => (): PState => ({
   selectedTool: tool,
 })
 
-export const onImagePaste = (
-  base64Data: string,
-  { width, height }: { width: number, height: number },
-) => ({ images }: State): PState => ({
+export const onImagePaste = (base64Data: string, { width, height }: { width: number, height: number }) => ({
+  images,
+}: State): PState => ({
   images: images.concat({ src: base64Data, height, width }),
 })
 
@@ -70,24 +67,24 @@ export const onDrawEnd = () => ({
 }: State): PState => ({
   points: [],
   undos: [],
-  drawings: save(R.append({
+  drawings: R.append({
     id: makeId(),
     points,
     color: selectedColor,
     tool: selectedTool,
     thickness: selectedThickness,
-  })(drawings)),
+  })(drawings),
 })
 
 export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => ({
   undos: [],
-  drawings: save(R.append({
+  drawings: R.append({
     id: makeId(),
     points: [],
     tool: 'clear',
     color: selectedColor,
     thickness: selectedThickness,
-  })(drawings)),
+  })(drawings),
 })
 
 export const onUndo = () => ({ undos, drawings }: State): PState => ({

@@ -2,6 +2,7 @@
 import React, { Component, type ComponentType } from 'react'
 import { map, pick } from 'ramda'
 import PropTypes from 'prop-types'
+
 import { identity } from '../../utils'
 
 export type Updater<State> = any => State => State

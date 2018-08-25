@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable */
 import React from 'react'
 
 let listener
@@ -19,7 +19,7 @@ async function retrieveImageFromClipboardAsBase64(
   if (clipboardData == null) return
   const { items = [] } = clipboardData
   // $FlowIssue
-  Array.from(items).forEach((item) => {
+  Array.from(items).forEach(item => {
     if (item.type.indexOf('image') > -1) {
       const blob = item.getAsFile()
 
@@ -28,10 +28,10 @@ async function retrieveImageFromClipboardAsBase64(
       const ctx = canvas.getContext('2d')
 
       // Create an image
-      const img = new Image() // eslint-disable-line no-undef
+      const img: { onload: any => void, width: number, height: number } = new Image() // eslint-disable-line no-undef
 
       // Once the image loads, render the img on the canvas
-      img.onload = function () {
+      img.onload = function() {
         // Update dimensions of the canvas with the dimensions of the image
         canvas.width = this.width
         canvas.height = this.height
@@ -62,7 +62,7 @@ function listenPaste(callback) {
   listener = window.addEventListener(
     // eslint-disable-line no-undef
     'paste',
-    async (e) => {
+    async e => {
       // Handle the event
       retrieveImageFromClipboardAsBase64(e, (imageDataBase64, width, height) => {
         // If there's an image, open it in the browser as a new window :)
@@ -79,8 +79,8 @@ function listenPaste(callback) {
     const img = new Image()
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const image = await new Promise((resolve) => {})
-    img.onLoad = function () {
+    const image = await new Promise(resolve => {})
+    img.onLoad = function() {
       canvas.width = img.width
       canvas.height = img.height
 
@@ -102,8 +102,8 @@ function listenPaste(callback) {
    */
 }
 
-export default function paster(Component) {
-  return class PasterWrapper extends React.Component {
+export default function paster<P>(Component: React.Component<P>) {
+  return class PasterWrapper extends React.Component<P> {
     componentDidMount() {
       if (this.props.onImagePaste) {
         listenPaste(this.props.onImagePaste)

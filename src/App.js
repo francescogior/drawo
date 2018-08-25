@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+
 import Controls from './Controls'
 import colors from './colors'
 import tools from './tools'
@@ -12,12 +13,12 @@ import * as updaters from './updaters'
 import { parse } from './serializer'
 import type { State } from './State'
 
-type Config = {
+type Config = {|
   colors: Color[],
   tools: Tool[],
   thicknesses: Thickness[],
-}
-type Env = { viewport: Viewport, hashString: string }
+|}
+type Env = {| viewport: Viewport, hashString: string |}
 
 const windowWidth: number = window.innerWidth // eslint-disable-line no-undef
 const windowHeight: number = window.innerHeight // eslint-disable-line no-undef
@@ -28,7 +29,7 @@ const config: Config = {
   thicknesses,
 }
 const env: Env = {
-  hashString: window.location.hash.slice(1), // eslint-disable-line no-undef
+  hashString: '', // window.location.hash.slice(1), // eslint-disable-line no-undef
   viewport: {
     width: windowWidth,
     height: windowHeight,
