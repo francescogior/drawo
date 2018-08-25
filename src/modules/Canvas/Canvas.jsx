@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { l, noop } from '../../utils'
+
+import { noop } from '../../utils'
 import paster from '../paster'
 
 const collectPointTouch = ({ touches }) => {
   const [touch, ...otherTouches] = [...touches]
   if (
-    touch !== void 0 &&
+    touch !== undefined &&
     touch !== null &&
     Number.isFinite(touch.clientX) &&
     Number.isFinite(touch.clientY)
@@ -16,8 +17,11 @@ const collectPointTouch = ({ touches }) => {
 }
 
 const collectPointCursor = ({ offsetX, offsetY }) => {
-  return { x: offsetX, y: offsetY }
-  throw new Error('Something is wrong in collectPointCursor')
+  try {
+    return { x: offsetX, y: offsetY }
+  } catch (error) {
+    throw new Error('Something is wrong in collectPointCursor', { error })
+  }
 }
 
 class Canvas extends Component {
@@ -30,6 +34,10 @@ class Canvas extends Component {
 
   componentDidMount() {
     this.readyToStartDraw()
+  }
+
+  componentWillUnmount() {
+    this.notReadyToStartDraw()
   }
 
   readyToStartDraw = () => {
@@ -57,7 +65,7 @@ class Canvas extends Component {
     this.canvas.removeEventListener('touchmove', this.passPointTouch)
   }
 
-  passPoint = (method) => (e) => {
+  passPoint = method => (e) => {
     this.props.onDraw(method(e))
   }
 
@@ -69,15 +77,11 @@ class Canvas extends Component {
     this.props.onDraw(collectPointTouch(e))
   }
 
-  componentWillUnmount() {
-    this.notReadyToStartDraw()
-  }
-
   onDrawStart = (e) => {
     this.props.onDrawStart()
     this.notReadyToStartDraw()
     this.readyToFinishDraw()
-    if (!!e.touches) {
+    if (e.touches) {
       this.passPointTouch(e)
       this.canvas.addEventListener('touchmove', this.passPointTouch)
     } else {
@@ -104,7 +108,7 @@ class Canvas extends Component {
     return (
       <svg
         className={className}
-        ref={(canvas) => (this.canvas = canvas)}
+        ref={(canvas) => { this.canvas = canvas }}
         width={width}
         height={height}
         style={{ background }}
@@ -116,7 +120,7 @@ class Canvas extends Component {
             y={0}
             width={width}
             height={height}
-            fill={`url(#PatternBackground)`}
+            fill="url(#PatternBackground)"
           />
         )}
 

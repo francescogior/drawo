@@ -1,4 +1,5 @@
 import React from 'react'
+
 import Rectangle from './modules/Canvas/Rectangle'
 import Path from './modules/Canvas/Path'
 import Circle from './modules/Canvas/Circle'
@@ -6,7 +7,7 @@ import Point from './modules/Canvas/Point'
 import Line from './modules/Canvas/Line'
 import Icon, { ICON_COLOR, ICON_SIZE } from './Icon'
 
-const iconPenPathPoints = (size) =>
+const iconPenPathPoints = size =>
   [
     [1 * size / 6, 3 * size / 4],
     [size / 5, size / 4],
@@ -14,7 +15,7 @@ const iconPenPathPoints = (size) =>
     [5 * size / 6, 1 * size / 6],
   ].map(([x, y]) => ({ x, y }))
 
-const iconArrowPathPoints = (size) =>
+const iconArrowPathPoints = size =>
   [
     [1 * size / 7, 3 * size / 6],
     [2 * size / 7, 2 * size / 6],
@@ -22,14 +23,14 @@ const iconArrowPathPoints = (size) =>
     [6 * size / 7, 3 * size / 6],
   ].map(([x, y]) => ({ x, y }))
 
-const iconArrowPathPointsUndo = (size) =>
+const iconArrowPathPointsUndo = size =>
   [
     [3 * size / 14, 3 * size / 12],
     [2 * size / 14, 6 * size / 12],
     [5 * size / 14, 7 * size / 12],
   ].map(([x, y]) => ({ x, y }))
 
-const iconArrowPathPointsRedo = (size) =>
+const iconArrowPathPointsRedo = size =>
   [
     [11 * size / 14, 3 * size / 12],
     [12 * size / 14, 6 * size / 12],
@@ -139,7 +140,7 @@ export const thicknessIcon = (
 )
 
 export const clearIcon = (
-  <IconX color={`rgba(200, 50, 50, .8)`} size={ICON_SIZE} />
+  <IconX color="rgba(200, 50, 50, .8)" size={ICON_SIZE} />
 )
 
 export const undoIcon = <IconArrow undo color={ICON_COLOR} size={ICON_SIZE} />

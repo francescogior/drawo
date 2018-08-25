@@ -1,5 +1,6 @@
 // @flow
 import * as R from 'ramda'
+
 import { Props, UIProps } from './types'
 import type { Point, Drawing } from '../domain'
 

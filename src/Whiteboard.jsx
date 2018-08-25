@@ -4,21 +4,24 @@ import cxs from 'cxs'
 import { connect, update } from './modules/ReactApp/ReactApp'
 import Canvas from './modules/Canvas/Canvas'
 import Drawing from './Drawing'
+import Image from './Image'
 import { filterBeforeLastClear } from './utils'
 import { Squared } from './patterns'
 
-export default connect([
-  'images',
-  'viewport',
+const keyStatesToConnect = [
   'drawings',
+  'viewport',
   'points',
   'selectedColor',
   'selectedThickness',
   'selectedTool',
-])(update(['collectPoint', 'onDrawEnd', 'onImagePaste'])(Whiteboard)) // eslint-disable-line no-use-before-define
+]
+
+const updateToConnect = ['collectPoint', 'onDrawEnd', 'onImagePaste']
+
+export default connect(keyStatesToConnect)(update(updateToConnect)(Whiteboard)) // eslint-disable-line no-use-before-define
 
 function Whiteboard({
-  images,
   viewport,
   drawings,
   points,
@@ -40,16 +43,28 @@ function Whiteboard({
       PatternBackground={() => <Squared size={30} />}
     >
       {filterBeforeLastClear(drawings).map(({
- points: drawingPoints, color, tool, thickness, id,
-}) => (
-  <Drawing
-    key={id}
-    points={drawingPoints}
-    color={color}
-    tool={tool}
-    thickness={thickness}
-  />
-        ))}
+        image,
+        points: drawingPoints,
+        color,
+        tool,
+        thickness,
+        id,
+      }) => (image != null ? (
+        <Image
+          key={id}
+          src={image.src}
+          height={image.height}
+          width={image.width}
+        />
+      ) : (
+        <Drawing
+          key={id}
+          points={drawingPoints}
+          color={color}
+          tool={tool}
+          thickness={thickness}
+        />
+      )))}
 
       <Drawing
         key="currentDrawing"
@@ -59,13 +74,6 @@ function Whiteboard({
         thickness={selectedThickness}
       />
 
-      {images.map(({ src, width, height }) => (
-        <image
-          href={src}
-          height={height / (window.devicePixelRatio || 2)} // eslint-disable-line no-undef
-          width={width / (window.devicePixelRatio || 2)} // eslint-disable-line no-undef
-        />
-      ))}
     </Canvas>
   )
 }

@@ -10,7 +10,7 @@ import { view } from './utils'
 import createReactApp from './modules/ReactApp/ReactApp'
 import type { Viewport, Color, Tool, Thickness } from './domain'
 import * as updaters from './updaters'
-import { parse } from './serializer'
+// import { parse } from './serializer'
 import type { State } from './State'
 
 type Config = {|
@@ -41,10 +41,9 @@ const makeInitialState = ({ colors, tools, thicknesses }: Config, env: Env): Sta
   colors,
   tools,
   thicknesses,
-  images: [],
   points: [],
   undos: [],
-  drawings: parse(env.hashString),
+  drawings: [],
   selectedColor: colors[0],
   selectedTool: tools[0],
   selectedThickness: thicknesses[0],

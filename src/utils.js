@@ -1,6 +1,7 @@
 // @flow
 import { findLastIndex, propEq, slice } from 'ramda'
 import stylexs from 'cxs/component'
+
 import type { Drawing, Viewport, Id } from './domain'
 
 const { random, floor } = Math

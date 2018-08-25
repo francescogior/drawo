@@ -26,9 +26,9 @@ export type Image = { src: string, width: number, height: number }
 
 export type Drawing = {|
   points: Point[],
-  images: Image[],
   color: Color,
   tool: Tool,
   thickness: Thickness,
   id: Id,
-|}
+  image?: Image,
+  |}

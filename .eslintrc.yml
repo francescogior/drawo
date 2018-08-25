@@ -8,8 +8,9 @@ plugins:
   - flowtype
   - prettier
 rules:
+  no-mixed-operators: 0
   max-len:
-    - 2
+    - 0
     - code: 120
       tabWidth: 2
   semi:

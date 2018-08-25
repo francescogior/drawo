@@ -35,7 +35,6 @@ export const parse = (drawingsString: string): Drawing[] =>
       const [tool, color, thickness, id, pointsString] = drawingString.split(SEP3)
 
       return {
-        images: [],
         // $FlowIssue boh
         tool,
         color,

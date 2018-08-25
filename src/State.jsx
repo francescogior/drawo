@@ -5,7 +5,6 @@ export type State = {|
   colors: Color[],
   thicknesses: Thickness[],
   tools: Tool[],
-  images: { src: string, width: number, height: number }[],
   undos: Drawing[],
   points: Point[],
   drawings: Drawing[],

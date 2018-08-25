@@ -53,9 +53,16 @@ export const setTool = (tool: Tool) => (): PState => ({
 })
 
 export const onImagePaste = (base64Data: string, { width, height }: { width: number, height: number }) => ({
-  images,
+  drawings,
 }: State): PState => ({
-  images: images.concat({ src: base64Data, height, width }),
+  drawings: drawings.concat({
+    image: { src: base64Data, height, width },
+    color: '',
+    id: makeId(),
+    points: [],
+    thickness: 1,
+    tool: 'pen',
+  }),
 })
 
 export const onDrawEnd = () => ({

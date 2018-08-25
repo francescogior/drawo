@@ -1,12 +1,13 @@
 // @flow
 import React from 'react'
+import { head } from 'ramda'
+
 import Rectangle from './modules/Canvas/Rectangle'
 import Path from './modules/Canvas/Path'
 import Circle from './modules/Canvas/Circle'
 import Point from './modules/Canvas/Point'
 import Line from './modules/Canvas/Line'
-import { head } from 'ramda'
-import type { Point as PointType, Tool, Color, Thickness } from './domain'
+import type { Tool, Color, Thickness } from './domain'
 import { l } from './utils'
 
 export type Props = {|
