@@ -15,7 +15,8 @@
     "rxjs": "^5.5.6"
   },
   "scripts": {
-    "deploy": "npm run build && rm ./build/static/js/*.map && now ./build --public --debug",
+    "deploy":
+      "npm run build && rm ./build/static/js/*.map && now ./build --public --debug",
     "alias": "now alias",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -24,7 +25,7 @@
     "lint": "eslint src"
   },
   "now": {
-    "alias": "drawo"
+    "alias": "drawo.sh"
   },
   "devDependencies": {
     "eslint": "^4.18.2",
