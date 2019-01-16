@@ -4,6 +4,7 @@ import * as R from 'ramda'
 import { makeId } from '../utils'
 import type { Point, Tool, Color, Thickness } from '../domain'
 import type { State, PState } from '../State'
+import { emit } from '../io'
 // import { stringify } from '../serializer'
 
 // TODO this would be a command
@@ -71,16 +72,28 @@ export const onDrawEnd = () => ({
   selectedColor,
   selectedTool,
   selectedThickness,
-}: State): PState => ({
-  points: [],
-  undos: [],
-  drawings: R.append({
+}: State): PState => {
+  const newDrawing = {
     id: makeId(),
     points,
     color: selectedColor,
     tool: selectedTool,
     thickness: selectedThickness,
-  })(drawings),
+  }
+  emit(newDrawing)
+  return {
+    points: [],
+    undos: [],
+    drawings: R.append(newDrawing)(drawings),
+  }
+}
+
+export const onRemoteDraw = (newRemoteDrawing: Drawing) => ({
+  drawings,
+}: State): PState => ({
+  points: [],
+  undos: [],
+  drawings: R.append(newRemoteDrawing)(drawings),
 })
 
 export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => ({

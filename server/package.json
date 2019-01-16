@@ -1,0 +1,17 @@
+{
+  "name": "io.drawo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "github.com/francescogior/drawo",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io": "^2.2.0"
+  },
+  "scripts": {
+    "start": "node .",
+    "alias": "now alias"
+  },
+  "now": {
+    "alias": "io.drawo.sh"
+  }
+}

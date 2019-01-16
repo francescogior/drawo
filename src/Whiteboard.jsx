@@ -7,6 +7,7 @@ import Drawing from './Drawing'
 import Image from './Image'
 import { filterBeforeLastClear } from './utils'
 import { Squared } from './patterns'
+import { onData } from './io'
 
 const keyStatesToConnect = [
   'drawings',
@@ -17,11 +18,10 @@ const keyStatesToConnect = [
   'selectedTool',
 ]
 
-const updateToConnect = ['collectPoint', 'onDrawEnd', 'onImagePaste']
+const updateToConnect = ['collectPoint', 'onDrawEnd', 'onImagePaste', 'onRemoteDraw']
 
-export default connect(keyStatesToConnect)(update(updateToConnect)(Whiteboard)) // eslint-disable-line no-use-before-define
 
-function Whiteboard({
+function whiteboardRender({
   viewport,
   drawings,
   points,
@@ -77,3 +77,17 @@ function Whiteboard({
     </Canvas>
   )
 }
+
+class Whiteboard extends React.Component {
+  componentDidMount() {
+    onData((data) => {
+      this.props.onRemoteDraw(data)
+    })
+  }
+
+  render() {
+    return whiteboardRender(this.props)
+  }
+}
+
+export default connect(keyStatesToConnect)(update(updateToConnect)(Whiteboard)) // eslint-disable-line no-use-before-define
