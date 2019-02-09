@@ -13,6 +13,23 @@ import { emit } from '../io'
 //   return drawings
 // }
 
+
+export const onImageMove = (imageId: string, dragCurrentPoint: Point) => ({ imagesMovements }) => console.log('move', imagesMovements[imageId]) || ({
+  imagesMovements: {
+    ...imagesMovements,
+    [imageId]:
+      (imagesMovements[imageId] || []).length === 0 ?
+        [{ start: dragCurrentPoint, end: dragCurrentPoint }] :
+        imagesMovements[imageId]
+          .slice(0, -1)
+          .concat({
+            start: R.last(imagesMovements[imageId]).start,
+            end: dragCurrentPoint,
+          }),
+  },
+})
+
+
 export const collectPoint = (point: Point) => ({ selectedTool, points }: State): PState => {
   const newPoints = selectedTool === 'pen' ? R.append(point, points) : points.length === 0 ? [point] : [points[0], point]
   emit(newPoints)
@@ -58,16 +75,20 @@ export const setTool = (tool: Tool) => (): PState => ({
 
 export const onImagePaste = (base64Data: string, { width, height }: { width: number, height: number }) => ({
   drawings,
-}: State): PState => ({
-  drawings: drawings.concat({
+}: State): PState => {
+  const newDrawing = {
     image: { src: base64Data, height, width },
     color: '',
     id: makeId(),
     points: [],
     thickness: 1,
     tool: 'pen',
-  }),
-})
+  }
+  emit(newDrawing)
+  return {
+    drawings: drawings.concat(newDrawing),
+  }
+}
 
 export const onDrawEnd = () => ({
   drawings,

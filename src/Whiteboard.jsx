@@ -5,7 +5,7 @@ import { connect, update } from './modules/ReactApp/ReactApp'
 import Canvas from './modules/Canvas/Canvas'
 import Drawing from './Drawing'
 import Image from './Image'
-import { filterBeforeLastClear, computeUndosAndRedos } from './utils'
+import { filterBeforeLastClear, computeUndosAndRedos, calculateTotalMovement } from './utils'
 import { Squared } from './patterns'
 import { onData } from './io'
 
@@ -17,10 +17,17 @@ const keyStatesToConnect = [
   'selectedThickness',
   'selectedTool',
   'remotePoints',
+  'imagesMovements',
 ]
 
-const updateToConnect = ['collectPoint', 'onDrawEnd', 'onImagePaste', 'onRemoteDraw', 'onRemotePoints']
-
+const updateToConnect = [
+  'collectPoint',
+  'onDrawEnd',
+  'onImagePaste',
+  'onRemoteDraw',
+  'onRemotePoints',
+  'onImageMove',
+]
 
 function whiteboardRender({
   viewport,
@@ -33,6 +40,8 @@ function whiteboardRender({
   onDrawEnd,
   onImagePaste,
   remotePoints,
+  onImageMove,
+  imagesMovements,
 }) {
   return (
     <Canvas
@@ -55,8 +64,13 @@ function whiteboardRender({
         <Image
           key={id}
           src={image.src}
+          x={200 + calculateTotalMovement(imagesMovements[id]).x}
+          y={200 + calculateTotalMovement(imagesMovements[id]).y}
           height={image.height}
           width={image.width}
+          onDrag={(position) => {
+            onImageMove(id, position)
+          }}
         />
       ) : (
         <Drawing

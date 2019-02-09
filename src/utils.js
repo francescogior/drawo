@@ -18,6 +18,12 @@ export const lf = (fn: Function) => (...args: any[]) => l(fn(...args.map(l)))
 export const noop = () => {}
 export const identity = x => x
 
+export const calculateMovement = ({ start, end }): Point => ({ x: end.x - start.x, y: end.y - start.y })
+
+export const calculateTotalMovement = (imgMovements: { start: Point, end: Point}[] = []): Point => imgMovements.map(calculateMovement).reduce((acc, mov) => ({
+  x: acc.x + mov.x, y: acc.y + mov.y,
+}), { x: 0, y: 0 })
+
 export const removeRedoneUndos = drawings => drawings.reduce((acc, drawing, index) => {
   if (drawing.tool === 'redo') {
     const shouldBeUndo = acc[index - 1]

@@ -52,6 +52,7 @@ const makeInitialState = ({ colors, tools, thicknesses }: Config, env: Env): Sta
   isColorMenuOpen: false,
   isToolMenuOpen: false,
   isThicknessMenuOpen: false,
+  imagesMovements: {},
 })
 
 const Screen = view()
