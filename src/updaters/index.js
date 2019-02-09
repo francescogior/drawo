@@ -96,27 +96,39 @@ export const onRemoteDraw = (newRemoteDrawing: Drawing) => ({
   drawings: R.append(newRemoteDrawing)(drawings),
 })
 
-export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => ({
-  undos: [],
-  drawings: R.append({
+export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => {
+  const newDrawing = {
     id: makeId(),
     points: [],
     tool: 'clear',
     color: selectedColor,
     thickness: selectedThickness,
-  })(drawings),
-})
+  }
+  emit(newDrawing)
+  return {
+    undos: [],
+    drawings: R.append(newDrawing)(drawings),
+  }
+}
 
-export const onUndo = () => ({ drawings }: State): PState => ({
-  drawings: R.append({
+export const onUndo = () => ({ drawings }: State): PState => {
+  const newDrawing = {
     id: makeId(),
     tool: 'undo',
-  })(drawings),
-})
+  }
+  emit(newDrawing)
+  return {
+    drawings: R.append(newDrawing)(drawings),
+  }
+}
 
-export const onRedo = () => ({ drawings }: State): PState => ({
-  drawings: R.append({
+export const onRedo = () => ({ drawings }: State): PState => {
+  const newDrawing = {
     id: makeId(),
     tool: 'redo',
-  })(drawings),
-})
+  }
+  emit(newDrawing)
+  return {
+    drawings: R.append(newDrawing)(drawings),
+  }
+}
