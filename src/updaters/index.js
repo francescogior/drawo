@@ -13,10 +13,13 @@ import { emit } from '../io'
 //   return drawings
 // }
 
-export const collectPoint = (point: Point) => ({ selectedTool, points }: State): PState => ({
-  points: selectedTool === 'pen' ? R.append(point, points) : points.length === 0 ? [point] : [points[0], point],
-})
-
+export const collectPoint = (point: Point) => ({ selectedTool, points }: State): PState => {
+  const newPoints = selectedTool === 'pen' ? R.append(point, points) : points.length === 0 ? [point] : [points[0], point]
+  emit(newPoints)
+  return ({
+    points: newPoints,
+  })
+}
 export const setColor = (color: Color) => (): PState => ({
   selectedColor: color,
 })
@@ -92,9 +95,15 @@ export const onRemoteDraw = (newRemoteDrawing: Drawing) => ({
   drawings,
 }: State): PState => ({
   points: [],
+  remotePoints: [],
   undos: [],
   drawings: R.append(newRemoteDrawing)(drawings),
 })
+
+export const onRemotePoints = (newRemotePoints: Point[]) => () => ({
+  remotePoints: newRemotePoints,
+})
+
 
 export const onClear = () => ({ drawings, selectedColor, selectedThickness }: State): PState => {
   const newDrawing = {

@@ -42,6 +42,7 @@ const makeInitialState = ({ colors, tools, thicknesses }: Config, env: Env): Sta
   tools,
   thicknesses,
   points: [],
+  remotePoints: [],
   undos: [],
   drawings: [],
   selectedColor: colors[0],

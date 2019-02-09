@@ -16,9 +16,10 @@ const keyStatesToConnect = [
   'selectedColor',
   'selectedThickness',
   'selectedTool',
+  'remotePoints',
 ]
 
-const updateToConnect = ['collectPoint', 'onDrawEnd', 'onImagePaste', 'onRemoteDraw']
+const updateToConnect = ['collectPoint', 'onDrawEnd', 'onImagePaste', 'onRemoteDraw', 'onRemotePoints']
 
 
 function whiteboardRender({
@@ -31,6 +32,7 @@ function whiteboardRender({
   collectPoint,
   onDrawEnd,
   onImagePaste,
+  remotePoints,
 }) {
   return (
     <Canvas
@@ -74,6 +76,14 @@ function whiteboardRender({
         thickness={selectedThickness}
       />
 
+      <Drawing
+        key="remoteDrawing"
+        points={remotePoints}
+        color={selectedColor}
+        tool={selectedTool}
+        thickness={selectedThickness}
+      />
+
     </Canvas>
   )
 }
@@ -81,7 +91,11 @@ function whiteboardRender({
 class Whiteboard extends React.Component {
   componentDidMount() {
     onData((data) => {
-      this.props.onRemoteDraw(data)
+      if (Array.isArray(data)) { // points
+        this.props.onRemotePoints(data)
+      } else { // drawing
+        this.props.onRemoteDraw(data)
+      }
     })
   }
 
