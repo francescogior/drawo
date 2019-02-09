@@ -5,7 +5,7 @@ import { connect, update } from './modules/ReactApp/ReactApp'
 import Canvas from './modules/Canvas/Canvas'
 import Drawing from './Drawing'
 import Image from './Image'
-import { filterBeforeLastClear } from './utils'
+import { filterBeforeLastClear, computeUndosAndRedos } from './utils'
 import { Squared } from './patterns'
 import { onData } from './io'
 
@@ -42,7 +42,7 @@ function whiteboardRender({
       onDrawEnd={onDrawEnd}
       PatternBackground={() => <Squared size={30} />}
     >
-      {filterBeforeLastClear(drawings).map(({
+      {filterBeforeLastClear(computeUndosAndRedos(drawings)).map(({
         image,
         points: drawingPoints,
         color,

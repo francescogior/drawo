@@ -107,12 +107,16 @@ export const onClear = () => ({ drawings, selectedColor, selectedThickness }: St
   })(drawings),
 })
 
-export const onUndo = () => ({ undos, drawings }: State): PState => ({
-  drawings: R.slice(0, -1)(drawings),
-  undos: R.prepend(R.last(drawings))(undos),
+export const onUndo = () => ({ drawings }: State): PState => ({
+  drawings: R.append({
+    id: makeId(),
+    tool: 'undo',
+  })(drawings),
 })
 
-export const onRedo = () => ({ undos, drawings }: State): PState => ({
-  drawings: R.append(R.head(undos))(drawings),
-  undos: R.slice(1, Infinity)(undos),
+export const onRedo = () => ({ drawings }: State): PState => ({
+  drawings: R.append({
+    id: makeId(),
+    tool: 'redo',
+  })(drawings),
 })
