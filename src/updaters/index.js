@@ -20,13 +20,17 @@ export const onImageMove = (imageId: string, dragCurrentPoint: Point) => ({ imag
     [imageId]:
       (imagesMovements[imageId] || []).length === 0 ?
         [{ start: dragCurrentPoint, end: dragCurrentPoint }] :
-        imagesMovements[imageId]
-          .slice(0, -1)
+        ((R.last(imagesMovements[imageId]).start === R.last(imagesMovements[imageId]).end) ?
+          imagesMovements[imageId].slice(0, -1) : imagesMovements[imageId])
           .concat({
             start: R.last(imagesMovements[imageId]).start,
             end: dragCurrentPoint,
           }),
   },
+})
+
+export const onImageMoveEnd = imageId => ({ imagesMovements, drawings }) => ({
+
 })
 
 
